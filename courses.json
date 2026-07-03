@@ -74,5 +74,20 @@
     "CSE 4165": "WP",
     "CSE 4889": "ML",
     "ACT 2111": "FMA"
+  },
+  "naimur": {
+    "CSE 3421": "SE",
+    "CSE 3422": "SE-lab",
+    "CSE 3711": "CN",
+    "CSE 3712": "CN-lab",
+    "CSE 3811": "AI",
+    "CSE 3812": "AI-lab"
+  },
+  "shadmansakib": {
+    "CSE 4325": "MM",
+    "CSE 4326": "MM-lab",
+    "CSE 4889": "ML",
+    "ECO 4101": "Econ",
+    "PMG 4101": "PMG"
   }
 }
