@@ -52,5 +52,13 @@
     "CSE 4509": "OS",
     "CSE 4510": "OS-lab",
     "ECO 4101": "Econ"
+  },
+  "sadat": {
+    "CSE 4889": "ML",
+    "CSE 4326": "MM-lab",
+    "CSE 3711": "CN",
+    "CSE 3712": "CN-lab",
+    "PHY 2106": "PHY-lab",
+    "PMG 4101": "PMG"
   }
 }
