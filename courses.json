@@ -1,35 +1,56 @@
 {
-  "0112330113": {
+  "zurat": {
     "CSE 4325": "MM",
     "CSE 4326": "MM-lab",
     "CSE 4509": "OS",
     "CSE 4510": "OS-lab",
     "CSE 4327": "VLSI"
   },
-  "0112330870": {
+  "saber": {
     "CSE 3421": "SE",
     "CSE 3422": "SE-lab",
     "CSE 3812": "AI-lab",
     "PMG 4101": "PMG"
   },
-  "0112330721": {
+  "zarif": {
     "CSE 3421": "SE",
     "CSE 3422": "SE-lab",
-    "CSE 3812": "AI-LAB",
+    "CSE 3812": "AI-lab",
     "PMG 4101": "PMG"
   },
-  "0112330121": {
+  "rumman": {
     "CSE 4325": "MM",
     "CSE 4326": "MM-lab",
     "CSE 4889": "ML",
     "ECO 4101": "Econ",
     "PMG 4101": "PMG"
   },
-  "0112330547": {
+  "ibtid": {
     "CSE 4326": "MM-lab",
     "CSE 3711": "CN",
     "CSE 3712": "CN-lab",
     "CSE 4889": "ML",
     "PMG 4101": "PMG"
+  },
+  "miraz": {
+    "CSE 4325": "MM",
+    "CSE 4326": "MM-lab",
+    "CSE 4509": "OS",
+    "CSE 4510": "OS-lab",
+    "ECO 4101": "Econ"
+  },
+  "fairoza": {
+    "CSE 4325": "MM",
+    "CSE 4326": "MM-lab",
+    "CSE 4509": "OS",
+    "CSE 4510": "OS-lab",
+    "ECO 4101": "Econ"
+  },
+  "taki": {
+    "CSE 4325": "MM",
+    "CSE 4326": "MM-lab",
+    "CSE 4509": "OS",
+    "CSE 4510": "OS-lab",
+    "ECO 4101": "Econ"
   }
 }

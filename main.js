@@ -3,7 +3,7 @@ import { mkdir } from "node:fs/promises";
 const SECTION_FILE = "res.json";
 const COURSES_CONFIG_FILE = "courses.json";
 const OUTPUT_DIR = "tsv";
-const FACULTY_FILE = `${OUTPUT_DIR}/faculty/combined.tsv`;
+const FACULTY_FILE = `${OUTPUT_DIR}/faculty/_.tsv`;
 
 const TIME_SLOTS = ["8:30", "9:50", "11:10", "12:30", "13:50", "15:10"];
 
@@ -620,15 +620,45 @@ async function main() {
     return;
   }
 
-  // Generate student-specific matrix and faculty files
+  // Group students by their course signature (sorted list of course codes)
+  const groupedConfigs = new Map();
+  const nameDiscrepancies = [];
+
   for (const studentId of peopleIds) {
-    console.log(
-      `${colors.bright}${colors.cyan}--- Generating matrix & faculty for ID: ${studentId} ---${colors.reset}`,
-    );
-
     const targetConfig = peopleConfigs[studentId];
-    const targetCodes = Object.keys(targetConfig);
+    const sortedCodes = Object.keys(targetConfig).sort();
+    const sig = sortedCodes.join(",");
+    if (!groupedConfigs.has(sig)) {
+      groupedConfigs.set(sig, []);
+    }
+    groupedConfigs.get(sig).push(studentId);
+  }
 
+  // Check for different names for the same course within duplicate groups
+  for (const [sig, studentIds] of groupedConfigs.entries()) {
+    if (studentIds.length > 1) {
+      const courseCodes = sig.split(",");
+      for (const code of courseCodes) {
+        const names = studentIds.map((id) => peopleConfigs[id][code]);
+        const uniqueNames = Array.from(new Set(names));
+        if (uniqueNames.length > 1) {
+          nameDiscrepancies.push({
+            code,
+            names: studentIds.map((id) => `${peopleConfigs[id][code]} (${id})`),
+          });
+        }
+      }
+    }
+  }
+
+  // Define generation helper
+  async function generateMatrixAndFaculty(
+    studentId,
+    targetConfig,
+    generateHtml,
+    generateTsv,
+  ) {
+    const targetCodes = Object.keys(targetConfig);
     const studentCourses = filteredCourses.filter((course) =>
       targetCodes.includes(course.formal_code),
     );
@@ -637,51 +667,57 @@ async function main() {
       console.warn(
         `   ${colors.yellow}[Warning] No courses found for ID ${studentId}. Skipping generation.${colors.reset}\n`,
       );
-      continue;
+      return;
     }
 
-    // Perform collision detection per student
-    detectCollisions(studentId, studentCourses);
+    if (generateTsv) {
+      // Perform collision detection per student
+      detectCollisions(studentId, studentCourses);
 
-    // Generate student-specific faculty list
-    try {
-      const studentUniqueFaculties = new Map();
-      for (const course of studentCourses) {
-        for (const section of course.sections) {
-          let facultyName = section.faculty_name || "";
-          let facultyCode = section.faculty_code || "";
-          if (
-            facultyName &&
-            facultyCode &&
-            facultyName !== "TBA" &&
-            facultyCode !== "TBA"
-          ) {
-            studentUniqueFaculties.set(facultyCode, facultyName);
+      // Generate student-specific faculty list
+      try {
+        const studentUniqueFaculties = new Map();
+        for (const course of studentCourses) {
+          for (const section of course.sections) {
+            let facultyName = section.faculty_name || "";
+            let facultyCode = section.faculty_code || "";
+            if (
+              facultyName &&
+              facultyCode &&
+              facultyName !== "TBA" &&
+              facultyCode !== "TBA"
+            ) {
+              studentUniqueFaculties.set(facultyCode, facultyName);
+            }
           }
         }
+
+        const studentFacultyRows = ["Faculty Name\tFaculty Code"];
+        const sortedStudentFaculties = Array.from(
+          studentUniqueFaculties.entries(),
+        ).sort((a, b) => a[0].localeCompare(b[0]));
+
+        for (const [code, name] of sortedStudentFaculties) {
+          studentFacultyRows.push(`${name}\t${code}`);
+        }
+
+        const studentFacultyOutputFile = `${OUTPUT_DIR}/faculty/${studentId}.tsv`;
+        await Bun.write(
+          studentFacultyOutputFile,
+          studentFacultyRows.join("\n"),
+        );
+        console.log(
+          `   * Saved faculty list to: ${colors.dim}${studentFacultyOutputFile}${colors.reset}`,
+        );
+      } catch (error) {
+        console.error(
+          `   ${colors.red}An error occurred during student faculty list generation:${colors.reset}\n`,
+          error,
+        );
       }
-
-      const studentFacultyRows = ["Faculty Name\tFaculty Code"];
-      const sortedStudentFaculties = Array.from(
-        studentUniqueFaculties.entries(),
-      ).sort((a, b) => a[0].localeCompare(b[0]));
-
-      for (const [code, name] of sortedStudentFaculties) {
-        studentFacultyRows.push(`${name}\t${code}`);
-      }
-
-      const studentFacultyOutputFile = `${OUTPUT_DIR}/faculty/${studentId}.tsv`;
-      await Bun.write(studentFacultyOutputFile, studentFacultyRows.join("\n"));
-      console.log(
-        `   * Saved faculty list to: ${colors.dim}${studentFacultyOutputFile}${colors.reset}`,
-      );
-    } catch (error) {
-      console.error(
-        `   ${colors.red}An error occurred during student faculty list generation:${colors.reset}\n`,
-        error,
-      );
     }
 
+    // Generate matrix and optionally write TSV/HTML
     try {
       const theoryCourses = [];
       const labCourses = [];
@@ -689,15 +725,15 @@ async function main() {
       for (const c of studentCourses) {
         const short =
           targetConfig[c.formal_code] || generateShortName(c.course_name);
-        if (short.endsWith("-lab")) {
+        if (short.toLowerCase().endsWith("-lab")) {
           labCourses.push({ code: c.course_code, short });
         } else {
           theoryCourses.push({ code: c.course_code, short });
         }
       }
 
-      theoryCourses.sort((a, b) => a.short.localeCompare(b.short));
-      labCourses.sort((a, b) => a.short.localeCompare(b.short));
+      theoryCourses.sort((a, b) => a.code.localeCompare(b.code));
+      labCourses.sort((a, b) => a.code.localeCompare(b.code));
 
       const columns = [];
       columns.push({ type: "time", groupName: "", courseShort: "TIME" });
@@ -831,24 +867,28 @@ async function main() {
         }
       }
 
-      const studentOutputFile = `${OUTPUT_DIR}/displays/${studentId}.tsv`;
-      const tsvContent = finalRows.map((r) => r.join("\t")).join("\n");
-      await Bun.write(studentOutputFile, tsvContent);
-      console.log(
-        `   * Saved schedule matrix to: ${colors.dim}${studentOutputFile}${colors.reset}`,
-      );
+      if (generateTsv) {
+        const studentOutputFile = `${OUTPUT_DIR}/displays/${studentId}.tsv`;
+        const tsvContent = finalRows.map((r) => r.join("\t")).join("\n");
+        await Bun.write(studentOutputFile, tsvContent);
+        console.log(
+          `   * Saved schedule matrix to: ${colors.dim}${studentOutputFile}${colors.reset}`,
+        );
+      }
 
-      // Generate HTML display for easy copy-pasting to Google Sheets
-      const studentHtmlOutputFile = `html/${studentId}.html`;
-      const htmlContent = generateHtmlDisplay(
-        studentId,
-        activeColumns,
-        finalRows,
-      );
-      await Bun.write(studentHtmlOutputFile, htmlContent);
-      console.log(
-        `   * Saved HTML schedule matrix (with Google Sheets styling) to: ${colors.dim}${studentHtmlOutputFile}${colors.reset}\n`,
-      );
+      if (generateHtml) {
+        // Generate HTML display for easy copy-pasting to Google Sheets
+        const studentHtmlOutputFile = `html/${studentId}.html`;
+        const htmlContent = generateHtmlDisplay(
+          studentId,
+          activeColumns,
+          finalRows,
+        );
+        await Bun.write(studentHtmlOutputFile, htmlContent);
+        console.log(
+          `   * Saved HTML schedule matrix (with Google Sheets styling) to: ${colors.dim}${studentHtmlOutputFile}${colors.reset}`,
+        );
+      }
     } catch (error) {
       console.error(
         `   ${colors.red}An error occurred during display matrix generation:${colors.reset}\n`,
@@ -857,8 +897,46 @@ async function main() {
     }
   }
 
+  // Generate TSVs for every student ID individually
+  for (const studentId of peopleIds) {
+    console.log(
+      `${colors.bright}${colors.cyan}--- Generating matrix & faculty (TSVs) for ID: ${studentId} ---${colors.reset}`,
+    );
+    await generateMatrixAndFaculty(
+      studentId,
+      peopleConfigs[studentId],
+      false,
+      true,
+    );
+    console.log("");
+  }
+
+  // Generate HTML for unique/grouped configurations
+  console.log(
+    `${colors.bright}${colors.cyan}--- Generating HTML Schedule Matrices ---${colors.reset}`,
+  );
+  for (const [sig, studentIds] of groupedConfigs.entries()) {
+    studentIds.sort();
+    const studentId = studentIds.join("+");
+    const targetConfig = peopleConfigs[studentIds[0]];
+    await generateMatrixAndFaculty(studentId, targetConfig, true, false);
+    console.log("");
+  }
+
   // Step 4: Verification of global files
   await validateOutputs(filteredCourses);
+
+  if (nameDiscrepancies.length > 0) {
+    console.log(
+      `\n${colors.bright}${colors.yellow}Course Name Discrepancies in Duplicate Configurations:${colors.reset}`,
+    );
+    for (const discrepancy of nameDiscrepancies) {
+      console.warn(
+        `   ${colors.yellow}[Warning] Course ${discrepancy.code} has different names: ${discrepancy.names.join(" vs ")}${colors.reset}`,
+      );
+    }
+    console.log("");
+  }
 
   console.log(
     `${colors.bright}${colors.green}All processing successfully completed!${colors.reset}\n`,
