@@ -634,20 +634,24 @@ async function main() {
     groupedConfigs.get(sig).push(studentId);
   }
 
-  // Check for different names for the same course within duplicate groups
-  for (const [sig, studentIds] of groupedConfigs.entries()) {
-    if (studentIds.length > 1) {
-      const courseCodes = sig.split(",");
-      for (const code of courseCodes) {
-        const names = studentIds.map((id) => peopleConfigs[id][code]);
-        const uniqueNames = Array.from(new Set(names));
-        if (uniqueNames.length > 1) {
-          nameDiscrepancies.push({
-            code,
-            names: studentIds.map((id) => `${peopleConfigs[id][code]} (${id})`),
-          });
-        }
+  // Check for different names for the same course across all configurations
+  const courseNameToStudents = new Map();
+  for (const studentId of peopleIds) {
+    for (const [code, name] of Object.entries(peopleConfigs[studentId])) {
+      if (!courseNameToStudents.has(code)) {
+        courseNameToStudents.set(code, []);
       }
+      courseNameToStudents.get(code).push({ name, studentId });
+    }
+  }
+
+  for (const [code, entries] of courseNameToStudents.entries()) {
+    const uniqueNames = Array.from(new Set(entries.map((e) => e.name)));
+    if (uniqueNames.length > 1) {
+      nameDiscrepancies.push({
+        code,
+        names: entries.map((e) => `${e.name} (${e.studentId})`),
+      });
     }
   }
 
@@ -928,7 +932,7 @@ async function main() {
 
   if (nameDiscrepancies.length > 0) {
     console.log(
-      `\n${colors.bright}${colors.yellow}Course Name Discrepancies in Duplicate Configurations:${colors.reset}`,
+      `\n${colors.bright}${colors.yellow}Course Name Discrepancies in Configurations:${colors.reset}`,
     );
     for (const discrepancy of nameDiscrepancies) {
       console.warn(

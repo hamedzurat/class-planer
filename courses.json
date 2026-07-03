@@ -61,8 +61,8 @@
     "PHY 2106": "PHY-lab",
     "PMG 4101": "PMG"
   },
-  "sabbir": {
-    "ACT 2111": "ACT",
+  "jahid": {
+    "ACT 2111": "FMA",
     "CSE 3421": "SE",
     "CSE 3712": "CN-lab",
     "ECO 4101": "Econ",
@@ -71,7 +71,7 @@
   "azmir": {
     "CSE 3421": "SE",
     "CSE 4326": "MM-lab",
-    "CSE 4165": "WP",
+    "CSE 4165": "WEB",
     "CSE 4889": "ML",
     "ACT 2111": "FMA"
   },
@@ -96,5 +96,12 @@
     "CSE 4889": "ML",
     "CSE 4165": "WEB",
     "PMG 4101": "PMG"
+  },
+  "shadman": {
+    "CSE 4325": "MM",
+    "CSE 4326": "MM-lab",
+    "CSE 4509": "OS",
+    "CSE 4510": "OS-lab",
+    "CSE 4165": "WEB"
   }
 }
