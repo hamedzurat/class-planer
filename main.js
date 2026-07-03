@@ -2,6 +2,8 @@ import { mkdir } from "node:fs/promises";
 
 const SECTION_FILE = "res.json";
 const COURSES_CONFIG_FILE = "courses.json";
+const OUTPUT_DIR = "tsv";
+const FACULTY_FILE = `${OUTPUT_DIR}/faculty/combined.tsv`;
 
 const TIME_SLOTS = ["8:30", "9:50", "11:10", "12:30", "13:50", "15:10"];
 
@@ -69,9 +71,9 @@ function isSectionStartingInSlot(section, targetTime, expectedDays) {
   return false;
 }
 
-function detectCollisions(courses) {
+function detectCollisions(studentId, courses) {
   console.log(
-    `   ${colors.cyan}Analyzing room and faculty bookings for collisions...${colors.reset}`,
+    `   ${colors.cyan}Analyzing room and faculty bookings for collisions (${studentId})...${colors.reset}`,
   );
   const assignments = [];
 
@@ -145,16 +147,16 @@ function detectCollisions(courses) {
   }
 }
 
-async function validateOutputs(courses, outputDir, facultyFile, outputFile) {
+async function validateOutputs(courses) {
   console.log(
-    `   ${colors.cyan}Running automated output verification...${colors.reset}`,
+    `${colors.cyan}Running automated output verification...${colors.reset}`,
   );
   const errors = [];
   const expectedFaculties = new Map();
 
   for (const course of courses) {
     const expectedTsvName = `${safeFileName(course.course_name)}.tsv`;
-    const tsvPath = `${outputDir}/${expectedTsvName}`;
+    const tsvPath = `${OUTPUT_DIR}/courses/${expectedTsvName}`;
 
     const file = Bun.file(tsvPath);
     if (!(await file.exists())) {
@@ -210,10 +212,10 @@ async function validateOutputs(courses, outputDir, facultyFile, outputFile) {
     }
   }
 
-  // Check faculty.tsv
-  const facFile = Bun.file(facultyFile);
+  // Check combined faculty file
+  const facFile = Bun.file(FACULTY_FILE);
   if (!(await facFile.exists())) {
-    errors.push(`Missing faculty list: ${facultyFile}`);
+    errors.push(`Missing faculty list: ${FACULTY_FILE}`);
   } else {
     const content = await facFile.text();
     const lines = content.split(/\r?\n/).filter((l) => l.trim().length > 0);
@@ -230,10 +232,10 @@ async function validateOutputs(courses, outputDir, facultyFile, outputFile) {
     expectedFaculties.forEach((name, code) => {
       const row = rows.find((r) => r["Faculty Code"] === code);
       if (!row) {
-        errors.push(`Faculty "${name}" (${code}) missing from ${facultyFile}`);
+        errors.push(`Faculty "${name}" (${code}) missing from ${FACULTY_FILE}`);
       } else if (row["Faculty Name"] !== name) {
         errors.push(
-          `Faculty Name mismatch in ${facultyFile} for ${code}: expected "${name}", got "${row["Faculty Name"]}"`,
+          `Faculty Name mismatch in ${FACULTY_FILE} for ${code}: expected "${name}", got "${row["Faculty Name"]}"`,
         );
       }
     });
@@ -241,50 +243,105 @@ async function validateOutputs(courses, outputDir, facultyFile, outputFile) {
 
   if (errors.length === 0) {
     console.log(
-      `      ${colors.green}*${colors.reset} Verification passed: All generated files match source data perfectly.\n`,
+      `   ${colors.green}*${colors.reset} Verification passed: All generated course and faculty files match source data perfectly.\n`,
     );
   } else {
     console.error(
-      `   ${colors.red}Verification failed with ${errors.length} errors:${colors.reset}`,
+      `${colors.red}Verification failed with ${errors.length} errors:${colors.reset}`,
     );
-    errors.forEach((e) => console.error(`      - ${e}`));
+    errors.forEach((e) => console.error(`   - ${e}`));
   }
 }
 
-async function processPerson(studentId, targetConfig, rawCourses) {
+async function main() {
   console.log(
-    `${colors.bright}${colors.cyan}--- Processing for ID: ${studentId} ---${colors.reset}`,
+    `\n${colors.bright}${colors.cyan}Starting class plan processing pipeline...${colors.reset}\n`,
   );
 
-  const outputDir = studentId;
-  const facultyFile = `${outputDir}/faculty.tsv`;
-  const outputFile = `${outputDir}/display.tsv`;
+  console.log(`${colors.cyan}Reading ${SECTION_FILE}...${colors.reset}`);
+  let rawCourses = [];
 
-  const targetCodes = Object.keys(targetConfig);
+  try {
+    const file = Bun.file(SECTION_FILE);
+    if (!(await file.exists())) {
+      console.error(
+        `${colors.red}Error: ${SECTION_FILE} not found. Please provide the file.${colors.reset}`,
+      );
+      return;
+    }
 
-  console.log(`   Filtering courses...`);
-  const filteredCourses = rawCourses.filter((course) =>
-    targetCodes.includes(course.formal_code),
-  );
-
-  console.log(
-    `   ${colors.green}Success! Total courses found: ${colors.bright}${filteredCourses.length}${colors.reset}\n`,
-  );
-
-  if (filteredCourses.length === 0) {
-    console.warn(
-      `   ${colors.yellow}[Warning] No courses found for ID ${studentId}. Skipping generation.${colors.reset}\n`,
+    const data = await file.json();
+    if (data && data.data && Array.isArray(data.data.courses)) {
+      rawCourses = data.data.courses;
+    } else {
+      console.error(
+        `${colors.red}Error: Unexpected JSON structure in res.json.${colors.reset}`,
+      );
+      return;
+    }
+  } catch (error) {
+    console.error(
+      `${colors.red}An error occurred during loading res.json:${colors.reset}`,
+      error,
     );
     return;
   }
 
-  // Collision detection
-  detectCollisions(filteredCourses);
+  // Load config of all people
+  console.log(`${colors.cyan}Reading ${COURSES_CONFIG_FILE}...${colors.reset}`);
+  let peopleConfigs = {};
 
-  // Generate course TSVs & faculty.tsv
-  console.log(`   Generating course TSVs & faculty list...`);
   try {
-    await mkdir(outputDir, { recursive: true });
+    const configFile = Bun.file(COURSES_CONFIG_FILE);
+    if (!(await configFile.exists())) {
+      console.error(
+        `${colors.red}Error: ${COURSES_CONFIG_FILE} not found. Please create it.${colors.reset}`,
+      );
+      return;
+    }
+    peopleConfigs = await configFile.json();
+  } catch (error) {
+    console.error(
+      `${colors.red}Error: Failed to parse ${COURSES_CONFIG_FILE}:${colors.reset}`,
+      error,
+    );
+    return;
+  }
+
+  const peopleIds = Object.keys(peopleConfigs);
+  if (peopleIds.length === 0) {
+    console.warn(
+      `${colors.yellow}[Warning] No configurations found in ${COURSES_CONFIG_FILE}.${colors.reset}`,
+    );
+    return;
+  }
+
+  // Collect the union of all course codes across all students
+  const unionTargetCodes = new Set();
+  for (const studentId of peopleIds) {
+    const targetCodes = Object.keys(peopleConfigs[studentId]);
+    targetCodes.forEach((code) => unionTargetCodes.add(code));
+  }
+
+  // Filter unique courses
+  const filteredCourses = rawCourses.filter((course) =>
+    unionTargetCodes.has(course.formal_code),
+  );
+
+  console.log(
+    `${colors.green}Filtering courses: found ${filteredCourses.length} unique courses across all configurations.${colors.reset}\n`,
+  );
+
+  // Generate course TSVs & faculty.tsv inside OUTPUT_DIR subfolders
+  console.log(
+    `${colors.cyan}Generating course TSVs & faculty list inside ${OUTPUT_DIR}/...${colors.reset}`,
+  );
+  try {
+    // Ensure all subfolders exist
+    await mkdir(`${OUTPUT_DIR}/courses`, { recursive: true });
+    await mkdir(`${OUTPUT_DIR}/faculty`, { recursive: true });
+    await mkdir(`${OUTPUT_DIR}/displays`, { recursive: true });
+
     const uniqueFaculties = new Map();
 
     for (const course of filteredCourses) {
@@ -308,7 +365,7 @@ async function processPerson(studentId, targetConfig, rawCourses) {
           !seatWarningGiven
         ) {
           console.warn(
-            `      ${colors.yellow}[Warning] Course ${course.course_name} (${course.course_code}) has sections with differing total seats (${firstSectionSeats} vs ${section.total_seats})${colors.reset}`,
+            `   ${colors.yellow}[Warning] Course ${course.course_name} (${course.course_code}) has sections with differing total seats (${firstSectionSeats} vs ${section.total_seats})${colors.reset}`,
           );
           seatWarningGiven = true;
         }
@@ -415,10 +472,10 @@ async function processPerson(studentId, targetConfig, rawCourses) {
       }
 
       const safeName = safeFileName(course.course_name);
-      const courseFileName = `${outputDir}/${safeName}.tsv`;
+      const courseFileName = `${OUTPUT_DIR}/courses/${safeName}.tsv`;
       await Bun.write(courseFileName, sectionRows.join("\n"));
       console.log(
-        `      ${colors.green}*${colors.reset} Saved sections list to: ${colors.dim}${courseFileName}${colors.reset}`,
+        `   * Saved sections list to: ${colors.dim}${courseFileName}${colors.reset}`,
       );
     }
 
@@ -431,255 +488,248 @@ async function processPerson(studentId, targetConfig, rawCourses) {
       facultyRows.push(`${name}\t${code}`);
     }
 
-    await Bun.write(facultyFile, facultyRows.join("\n"));
+    await Bun.write(FACULTY_FILE, facultyRows.join("\n"));
     console.log(
-      `      ${colors.green}*${colors.reset} Saved faculty list to: ${colors.dim}${facultyFile}${colors.reset}\n`,
+      `   * Saved combined faculty list to: ${colors.dim}${FACULTY_FILE}${colors.reset}\n`,
     );
   } catch (error) {
     console.error(
-      `   ${colors.red}An error occurred during TSV generation:${colors.reset}\n`,
+      `${colors.red}An error occurred during TSV generation:${colors.reset}\n`,
       error,
     );
     return;
   }
 
-  // Generate Display Matrix
-  console.log(`   Generating display matrix...`);
-  try {
-    const theoryCourses = [];
-    const labCourses = [];
+  // Generate student-specific matrix and faculty files
+  for (const studentId of peopleIds) {
+    console.log(
+      `${colors.bright}${colors.cyan}--- Generating matrix & faculty for ID: ${studentId} ---${colors.reset}`,
+    );
 
-    for (const c of filteredCourses) {
-      const short =
-        targetConfig[c.formal_code] || generateShortName(c.course_name);
-      if (short.endsWith("-lab")) {
-        labCourses.push({ code: c.course_code, short });
-      } else {
-        theoryCourses.push({ code: c.course_code, short });
-      }
+    const targetConfig = peopleConfigs[studentId];
+    const targetCodes = Object.keys(targetConfig);
+
+    const studentCourses = filteredCourses.filter((course) =>
+      targetCodes.includes(course.formal_code),
+    );
+
+    if (studentCourses.length === 0) {
+      console.warn(
+        `   ${colors.yellow}[Warning] No courses found for ID ${studentId}. Skipping generation.${colors.reset}\n`,
+      );
+      continue;
     }
 
-    theoryCourses.sort((a, b) => a.short.localeCompare(b.short));
-    labCourses.sort((a, b) => a.short.localeCompare(b.short));
+    // Perform collision detection per student
+    detectCollisions(studentId, studentCourses);
 
-    const columns = [];
-    columns.push({ type: "time", groupName: "", courseShort: "TIME" });
-
-    for (let gIdx = 0; gIdx < DAY_GROUPS.length; gIdx++) {
-      const group = DAY_GROUPS[gIdx];
-      if (group.type === "none") {
-        columns.push({
-          type: "none",
-          groupIndex: gIdx,
-          groupName: group.name,
-          courseShort: "xxx",
-        });
-      } else {
-        const coursesInGroup =
-          group.type === "theory" ? theoryCourses : labCourses;
-        for (const c of coursesInGroup) {
-          columns.push({
-            type: group.type,
-            groupIndex: gIdx,
-            groupName: group.name,
-            courseCode: c.code,
-            courseShort: c.short,
-          });
-        }
-      }
-    }
-
-    const allSlotRows = [];
-
-    for (let slotIdx = 0; slotIdx < TIME_SLOTS.length; slotIdx++) {
-      const time = TIME_SLOTS[slotIdx];
-
-      const colMatches = columns.map((col) => {
-        if (col.type === "time") {
-          return [time];
-        }
-        if (col.type === "none") {
-          return ["x"];
-        }
-
-        const c = filteredCourses.find(
-          (cc) => cc.course_code === col.courseCode,
-        );
-        const matches = [];
-        if (c) {
-          const group = DAY_GROUPS[col.groupIndex];
-          for (const section of c.sections) {
-            if (isSectionStartingInSlot(section, time, group.days)) {
-              const displayVal = section.faculty_code
-                ? `${section.faculty_code}-${section.section_name}`
-                : section.section_name;
-              matches.push(displayVal);
-            }
+    // Generate student-specific faculty list
+    try {
+      const studentUniqueFaculties = new Map();
+      for (const course of studentCourses) {
+        for (const section of course.sections) {
+          let facultyName = section.faculty_name || "";
+          let facultyCode = section.faculty_code || "";
+          if (
+            facultyName &&
+            facultyCode &&
+            facultyName !== "TBA" &&
+            facultyCode !== "TBA"
+          ) {
+            studentUniqueFaculties.set(facultyCode, facultyName);
           }
         }
-        return matches;
-      });
+      }
 
-      let maxMatches = 0;
-      for (let i = 1; i < columns.length; i++) {
-        if (columns[i].type !== "none" && colMatches[i].length > maxMatches) {
-          maxMatches = colMatches[i].length;
+      const studentFacultyRows = ["Faculty Name\tFaculty Code"];
+      const sortedStudentFaculties = Array.from(
+        studentUniqueFaculties.entries(),
+      ).sort((a, b) => a[0].localeCompare(b[0]));
+
+      for (const [code, name] of sortedStudentFaculties) {
+        studentFacultyRows.push(`${name}\t${code}`);
+      }
+
+      const studentFacultyOutputFile = `${OUTPUT_DIR}/faculty/${studentId}.tsv`;
+      await Bun.write(studentFacultyOutputFile, studentFacultyRows.join("\n"));
+      console.log(
+        `   * Saved faculty list to: ${colors.dim}${studentFacultyOutputFile}${colors.reset}`,
+      );
+    } catch (error) {
+      console.error(
+        `   ${colors.red}An error occurred during student faculty list generation:${colors.reset}\n`,
+        error,
+      );
+    }
+
+    try {
+      const theoryCourses = [];
+      const labCourses = [];
+
+      for (const c of studentCourses) {
+        const short =
+          targetConfig[c.formal_code] || generateShortName(c.course_name);
+        if (short.endsWith("-lab")) {
+          labCourses.push({ code: c.course_code, short });
+        } else {
+          theoryCourses.push({ code: c.course_code, short });
         }
       }
 
-      if (maxMatches > 0) {
-        for (let rowIdx = 0; rowIdx < maxMatches; rowIdx++) {
-          const rowCells = columns.map((col, colIdx) => {
-            if (col.type === "time") {
-              return rowIdx === 0 ? time : "";
-            }
-            if (col.type === "none") {
-              return "x";
-            }
-            return colMatches[colIdx][rowIdx] || "";
+      theoryCourses.sort((a, b) => a.short.localeCompare(b.short));
+      labCourses.sort((a, b) => a.short.localeCompare(b.short));
+
+      const columns = [];
+      columns.push({ type: "time", groupName: "", courseShort: "TIME" });
+
+      for (let gIdx = 0; gIdx < DAY_GROUPS.length; gIdx++) {
+        const group = DAY_GROUPS[gIdx];
+        if (group.type === "none") {
+          columns.push({
+            type: "none",
+            groupIndex: gIdx,
+            groupName: group.name,
+            courseShort: "xxx",
           });
-          allSlotRows.push(rowCells);
+        } else {
+          const coursesInGroup =
+            group.type === "theory" ? theoryCourses : labCourses;
+          for (const c of coursesInGroup) {
+            columns.push({
+              type: group.type,
+              groupIndex: gIdx,
+              groupName: group.name,
+              courseCode: c.code,
+              courseShort: c.short,
+            });
+          }
         }
       }
-    }
 
-    const activeColumnIndices = [0];
-    for (let colIdx = 1; colIdx < columns.length; colIdx++) {
-      let hasData = false;
+      const allSlotRows = [];
+
+      for (let slotIdx = 0; slotIdx < TIME_SLOTS.length; slotIdx++) {
+        const time = TIME_SLOTS[slotIdx];
+
+        const colMatches = columns.map((col) => {
+          if (col.type === "time") {
+            return [time];
+          }
+          if (col.type === "none") {
+            return ["x"];
+          }
+
+          const c = studentCourses.find(
+            (cc) => cc.course_code === col.courseCode,
+          );
+          const matches = [];
+          if (c) {
+            const group = DAY_GROUPS[col.groupIndex];
+            for (const section of c.sections) {
+              if (isSectionStartingInSlot(section, time, group.days)) {
+                const displayVal = section.faculty_code
+                  ? `${section.faculty_code}-${section.section_name}`
+                  : section.section_name;
+                matches.push(displayVal);
+              }
+            }
+          }
+          return matches;
+        });
+
+        let maxMatches = 0;
+        for (let i = 1; i < columns.length; i++) {
+          if (columns[i].type !== "none" && colMatches[i].length > maxMatches) {
+            maxMatches = colMatches[i].length;
+          }
+        }
+
+        if (maxMatches > 0) {
+          for (let rowIdx = 0; rowIdx < maxMatches; rowIdx++) {
+            const rowCells = columns.map((col, colIdx) => {
+              if (col.type === "time") {
+                return rowIdx === 0 ? time : "";
+              }
+              if (col.type === "none") {
+                return "x";
+              }
+              return colMatches[colIdx][rowIdx] || "";
+            });
+            allSlotRows.push(rowCells);
+          }
+        }
+      }
+
+      const activeColumnIndices = [0];
+      for (let colIdx = 1; colIdx < columns.length; colIdx++) {
+        let hasData = false;
+        for (const row of allSlotRows) {
+          const val = row[colIdx];
+          if (val !== "" && val !== "x") {
+            hasData = true;
+            break;
+          }
+        }
+        if (hasData) {
+          activeColumnIndices.push(colIdx);
+        }
+      }
+
+      const activeColumns = activeColumnIndices.map((idx) => columns[idx]);
+      const finalRows = [];
+
+      const headerRow1 = ["TIME"];
+      let lastGroupName = null;
+      for (let i = 1; i < activeColumns.length; i++) {
+        const col = activeColumns[i];
+        if (col.groupName !== lastGroupName) {
+          headerRow1.push(col.groupName);
+          lastGroupName = col.groupName;
+        } else {
+          headerRow1.push("");
+        }
+      }
+      finalRows.push(headerRow1);
+
+      const headerRow2 = [""];
+      for (let i = 1; i < activeColumns.length; i++) {
+        headerRow2.push(activeColumns[i].courseShort);
+      }
+      finalRows.push(headerRow2);
+
       for (const row of allSlotRows) {
-        const val = row[colIdx];
-        if (val !== "" && val !== "x") {
-          hasData = true;
-          break;
+        const filteredRow = activeColumnIndices.map((idx) => row[idx]);
+        const hasContent = filteredRow
+          .slice(1)
+          .some((val) => val !== "" && val !== "x");
+        if (hasContent) {
+          finalRows.push(filteredRow);
         }
       }
-      if (hasData) {
-        activeColumnIndices.push(colIdx);
+
+      const footerRow = ["END"];
+      for (let i = 1; i < activeColumns.length; i++) {
+        const col = activeColumns[i];
+        footerRow.push(col.type === "none" ? "x" : "");
       }
-    }
+      finalRows.push(footerRow);
 
-    const activeColumns = activeColumnIndices.map((idx) => columns[idx]);
-    const finalRows = [];
-
-    const headerRow1 = ["TIME"];
-    let lastGroupName = null;
-    for (let i = 1; i < activeColumns.length; i++) {
-      const col = activeColumns[i];
-      if (col.groupName !== lastGroupName) {
-        headerRow1.push(col.groupName);
-        lastGroupName = col.groupName;
-      } else {
-        headerRow1.push("");
-      }
-    }
-    finalRows.push(headerRow1);
-
-    const headerRow2 = [""];
-    for (let i = 1; i < activeColumns.length; i++) {
-      headerRow2.push(activeColumns[i].courseShort);
-    }
-    finalRows.push(headerRow2);
-
-    for (const row of allSlotRows) {
-      const filteredRow = activeColumnIndices.map((idx) => row[idx]);
-      const hasContent = filteredRow
-        .slice(1)
-        .some((val) => val !== "" && val !== "x");
-      if (hasContent) {
-        finalRows.push(filteredRow);
-      }
-    }
-
-    const footerRow = ["END"];
-    for (let i = 1; i < activeColumns.length; i++) {
-      const col = activeColumns[i];
-      footerRow.push(col.type === "none" ? "x" : "");
-    }
-    finalRows.push(footerRow);
-
-    const tsvContent = finalRows.map((r) => r.join("\t")).join("\n");
-    await Bun.write(outputFile, tsvContent);
-    console.log(
-      `      ${colors.green}*${colors.reset} Saved schedule to: ${colors.dim}${outputFile}${colors.reset}\n`,
-    );
-
-    // Verification
-    await validateOutputs(filteredCourses, outputDir, facultyFile, outputFile);
-  } catch (error) {
-    console.error(
-      `   ${colors.red}An error occurred during display matrix generation:${colors.reset}\n`,
-      error,
-    );
-  }
-}
-
-async function main() {
-  console.log(
-    `\n${colors.bright}${colors.cyan}Starting class plan processing pipeline...${colors.reset}\n`,
-  );
-
-  console.log(`${colors.cyan}Reading ${SECTION_FILE}...${colors.reset}`);
-  let rawCourses = [];
-
-  try {
-    const file = Bun.file(SECTION_FILE);
-    if (!(await file.exists())) {
-      console.error(
-        `${colors.red}Error: ${SECTION_FILE} not found. Please provide the file.${colors.reset}`,
+      const studentOutputFile = `${OUTPUT_DIR}/displays/${studentId}.tsv`;
+      const tsvContent = finalRows.map((r) => r.join("\t")).join("\n");
+      await Bun.write(studentOutputFile, tsvContent);
+      console.log(
+        `   * Saved schedule matrix to: ${colors.dim}${studentOutputFile}${colors.reset}\n`,
       );
-      return;
-    }
-
-    const data = await file.json();
-    if (data && data.data && Array.isArray(data.data.courses)) {
-      rawCourses = data.data.courses;
-    } else {
+    } catch (error) {
       console.error(
-        `${colors.red}Error: Unexpected JSON structure in res.json.${colors.reset}`,
+        `   ${colors.red}An error occurred during display matrix generation:${colors.reset}\n`,
+        error,
       );
-      return;
     }
-  } catch (error) {
-    console.error(
-      `${colors.red}An error occurred during loading res.json:${colors.reset}`,
-      error,
-    );
-    return;
   }
 
-  // Load config of all people
-  console.log(`${colors.cyan}Reading ${COURSES_CONFIG_FILE}...${colors.reset}`);
-  let peopleConfigs = {};
-
-  try {
-    const configFile = Bun.file(COURSES_CONFIG_FILE);
-    if (!(await configFile.exists())) {
-      console.error(
-        `${colors.red}Error: ${COURSES_CONFIG_FILE} not found. Please create it.${colors.reset}`,
-      );
-      return;
-    }
-    peopleConfigs = await configFile.json();
-  } catch (error) {
-    console.error(
-      `${colors.red}Error: Failed to parse ${COURSES_CONFIG_FILE}:${colors.reset}`,
-      error,
-    );
-    return;
-  }
-
-  const peopleIds = Object.keys(peopleConfigs);
-  if (peopleIds.length === 0) {
-    console.warn(
-      `${colors.yellow}[Warning] No configurations found in ${COURSES_CONFIG_FILE}.${colors.reset}`,
-    );
-    return;
-  }
-
-  // Process each person
-  for (const studentId of peopleIds) {
-    await processPerson(studentId, peopleConfigs[studentId], rawCourses);
-  }
+  // Step 4: Verification of global files
+  await validateOutputs(filteredCourses);
 
   console.log(
     `${colors.bright}${colors.green}All processing successfully completed!${colors.reset}\n`,
