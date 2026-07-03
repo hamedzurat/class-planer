@@ -9,3 +9,7 @@ help:
 # Format all JavaScript and JSON files
 format:
     bunx prettier --write *.js package.json
+
+# Serve the html directory using serve from npm (via Bun)
+serve:
+    bunx serve -l 8000 html

@@ -1,12 +1,11 @@
-TIME	Sat + Tue		Sat		Sun + Wed			Sun		Mon		Tue		Wed	
-	MM	OS	MM-lab	OS-lab	MM	OS	VLSI	MM-lab	OS-lab	MM-lab	OS-lab	MM-lab	OS-lab	MM-lab	OS-lab
-8:30		NaFS-A	MSTR-A	J	I	E		C	NaFS-B		MEHq-D	ArBh-F		I	
-					K									L	
-9:50	J				MSTR-D										
-11:10	MSTR-A		ArBh-B		ArBh-F	F		RNF-D		MfSh-M	SYH-G	G	FzAn-E	RNF-J	
-											ABF-H				
-12:30	C	NaFS-B			ArBh-H										
-13:50	E	MdSam-C		A		MdSam-G	MFRn-A	AbHn-E			SYH-C	MSTR-H		K	NaFS-I
-											MEHq-F			N	
-15:10		MSdHn-D			MSTR-B	MSdHn-H									
-END															
+TIME	Sat + Tue		Sat		Sun + Wed			Sun		Mon		Tue		Wed		Thu	Fri
+	MM	OS	MM-lab	OS-lab	MM	OS	VLSI	MM-lab	OS-lab	MM-lab	OS-lab	MM-lab	OS-lab	MM-lab	OS-lab	xxx	xxx
+8:30		NaFS-A	MSTR-A	J	I	E		C	NaFS-B		MEHq-D	ArBh-F		I		x	x
+					K									L		x	x
+9:50	J				MSTR-D											x	x
+11:10	MSTR-A		ArBh-B		ArBh-F	F		RNF-D		MfSh-M	SYH-G	G	FzAn-E	RNF-J		x	x
+											ABF-H					x	x
+12:30	C	NaFS-B			ArBh-H											x	x
+13:50	E	MdSam-C		A		MdSam-G	MFRn-A	AbHn-E			SYH-C	MSTR-H		K	NaFS-I	x	x
+											MEHq-F			N		x	x
+15:10		MSdHn-D			MSTR-B	MSdHn-H										x	x

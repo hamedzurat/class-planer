@@ -252,6 +252,125 @@ async function validateOutputs(courses) {
     errors.forEach((e) => console.error(`   - ${e}`));
   }
 }
+function generateHtmlDisplay(studentId, activeColumns, finalRows) {
+  const DAY_GROUP_COLORS = {
+    "Sat + Tue": { bg: "#f9cb9c", text: "#000000" },
+    Sat: { bg: "#b6d7a8", text: "#000000" },
+    "Sun + Wed": { bg: "#ea9999", text: "#000000" },
+    Sun: { bg: "#9fc5e8", text: "#000000" },
+    Mon: { bg: "#dd7e6b", text: "#000000" },
+    Tue: { bg: "#a2c4c9", text: "#000000" },
+    Wed: { bg: "#b4a7d6", text: "#000000" },
+    Thu: { bg: "#b7b7b7", text: "#000000" },
+    Fri: { bg: "#b7b7b7", text: "#000000" },
+  };
+
+  // Group Row 1 columns to calculate colspans
+  const headerGroups = [];
+  let currentGroup = null;
+  for (let i = 1; i < activeColumns.length; i++) {
+    const col = activeColumns[i];
+    const groupName = col.groupName || col.courseShort;
+    if (currentGroup && currentGroup.name === groupName) {
+      currentGroup.count++;
+    } else {
+      currentGroup = { name: groupName, count: 1 };
+      headerGroups.push(currentGroup);
+    }
+  }
+
+  let html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Schedule Matrix - ${studentId}</title>
+</head>
+<body style="margin: 0; padding: 0;">
+  <table class="waffle" cellspacing="0" cellpadding="0" style="border-collapse: collapse; font-family: 'Lexend', Arial, sans-serif; font-size: 11pt;">
+  `;
+
+  // Row 1: Group headers
+  html += '      <tr style="height: 20px;">\n';
+  // TIME has rowspan 2
+  html += `        <td style="background-color: #000000; text-align: center; font-weight: bold; color: #ffffff; font-family: 'Lexend', Arial, sans-serif; font-size: 16pt; vertical-align: middle; white-space: nowrap; padding: 2px 3px 2px 3px; border: 1px solid #cbd5e1;" rowspan="2">TIME</td>\n`;
+  for (const group of headerGroups) {
+    const colorInfo = DAY_GROUP_COLORS[group.name] || {
+      bg: "#b7b7b7",
+      text: "#000000",
+    };
+    const fontStr =
+      group.name === "Thu" || group.name === "Fri"
+        ? "'Fira Code', Arial, monospace"
+        : "'Lexend', Arial, sans-serif";
+    const colspanAttr = group.count > 1 ? ` colspan="${group.count}"` : "";
+    html += `        <td style="background-color: ${colorInfo.bg}; text-align: center; font-weight: bold; color: ${colorInfo.text}; font-family: ${fontStr}; font-size: 16pt; vertical-align: middle; white-space: nowrap; padding: 2px 3px 2px 3px; border: 1px solid #cbd5e1;"${colspanAttr}>${group.name}</td>\n`;
+  }
+  html += "      </tr>\n";
+
+  // Row 2: Course short names
+  html += '      <tr style="height: 20px;">\n';
+  const row2 = finalRows[1];
+  for (let colIdx = 1; colIdx < row2.length; colIdx++) {
+    const val = row2[colIdx];
+    const col = activeColumns[colIdx];
+
+    if (val === "xxx") {
+      // Thu/Fri placeholder
+      html += `        <td style="background-color: #b7b7b7; text-align: center; font-weight: bold; color: #666666; font-family: 'Fira Code', Arial, monospace; font-size: 16pt; vertical-align: bottom; white-space: nowrap; padding: 2px 3px 2px 3px; border: 1px solid #cbd5e1;">${val}</td>\n`;
+    } else {
+      const isLab = col && col.type === "lab";
+      const underlineStyle = isLab
+        ? "text-decoration: underline; text-decoration-skip-ink: none; -webkit-text-decoration-skip: none;"
+        : "";
+      html += `        <td style="background-color: #ffffff; text-align: center; ${underlineStyle} color: #000000; font-family: 'Lexend', Arial, sans-serif; font-size: 16pt; vertical-align: bottom; white-space: nowrap; padding: 2px 3px 2px 3px; border: 1px solid #cbd5e1;">${val}</td>\n`;
+    }
+  }
+  html += "      </tr>\n";
+
+  // Data rows
+  for (let rIdx = 2; rIdx < finalRows.length; rIdx++) {
+    html += '      <tr style="height: 20px;">\n';
+    const row = finalRows[rIdx];
+    for (let colIdx = 0; colIdx < row.length; colIdx++) {
+      const val = row[colIdx];
+      const col = activeColumns[colIdx];
+
+      if (colIdx === 0) {
+        // Time column (s14)
+        html += `        <td style="background-color: #ffffff; text-align: right; color: #000000; font-family: 'Lexend', Arial, sans-serif; font-size: 16pt; vertical-align: bottom; white-space: nowrap; padding: 2px 3px 2px 3px; border: 1px solid #cbd5e1;">${val}</td>\n`;
+      } else if (val === "x") {
+        // None cells (Thu/Fri/etc. - s16)
+        html += `        <td style="background-color: #b7b7b7; text-align: center; color: #666666; font-family: 'Fira Code', Arial, monospace; font-size: 16pt; vertical-align: bottom; white-space: nowrap; padding: 2px 3px 2px 3px; border: 1px solid #cbd5e1;">${val}</td>\n`;
+      } else {
+        // Populated or empty active cell
+        const isStartingTimeRow = row[0] !== "";
+        const isNoneCol = col && col.type === "none";
+        let bg = "#ffffff";
+
+        if (isStartingTimeRow && col && !isNoneCol) {
+          if (col.type === "lab") {
+            // Labs only start on 8:30, 11:10, 13:50
+            const time = row[0];
+            if (time === "8:30" || time === "11:10" || time === "13:50") {
+              bg = "#d9d9d9";
+            }
+          } else {
+            // Theory starts on all time slots
+            bg = "#d9d9d9";
+          }
+        }
+        html += `        <td style="background-color: ${bg}; text-align: center; color: #000000; font-family: 'Lexend', Arial, sans-serif; font-size: 14pt; vertical-align: bottom; white-space: nowrap; padding: 2px 3px 2px 3px; border: 1px solid #cbd5e1;">${val}</td>\n`;
+      }
+    }
+    html += "      </tr>\n";
+  }
+
+  html += `  </table>
+</body>
+</html>
+`;
+  return html;
+}
 
 async function main() {
   console.log(
@@ -341,6 +460,7 @@ async function main() {
     await mkdir(`${OUTPUT_DIR}/courses`, { recursive: true });
     await mkdir(`${OUTPUT_DIR}/faculty`, { recursive: true });
     await mkdir(`${OUTPUT_DIR}/displays`, { recursive: true });
+    await mkdir("html", { recursive: true });
 
     const uniqueFaculties = new Map();
 
@@ -663,11 +783,15 @@ async function main() {
       const activeColumnIndices = [0];
       for (let colIdx = 1; colIdx < columns.length; colIdx++) {
         let hasData = false;
-        for (const row of allSlotRows) {
-          const val = row[colIdx];
-          if (val !== "" && val !== "x") {
-            hasData = true;
-            break;
+        if (columns[colIdx].type === "none") {
+          hasData = true;
+        } else {
+          for (const row of allSlotRows) {
+            const val = row[colIdx];
+            if (val !== "" && val !== "x") {
+              hasData = true;
+              break;
+            }
           }
         }
         if (hasData) {
@@ -707,18 +831,23 @@ async function main() {
         }
       }
 
-      const footerRow = ["END"];
-      for (let i = 1; i < activeColumns.length; i++) {
-        const col = activeColumns[i];
-        footerRow.push(col.type === "none" ? "x" : "");
-      }
-      finalRows.push(footerRow);
-
       const studentOutputFile = `${OUTPUT_DIR}/displays/${studentId}.tsv`;
       const tsvContent = finalRows.map((r) => r.join("\t")).join("\n");
       await Bun.write(studentOutputFile, tsvContent);
       console.log(
-        `   * Saved schedule matrix to: ${colors.dim}${studentOutputFile}${colors.reset}\n`,
+        `   * Saved schedule matrix to: ${colors.dim}${studentOutputFile}${colors.reset}`,
+      );
+
+      // Generate HTML display for easy copy-pasting to Google Sheets
+      const studentHtmlOutputFile = `html/${studentId}.html`;
+      const htmlContent = generateHtmlDisplay(
+        studentId,
+        activeColumns,
+        finalRows,
+      );
+      await Bun.write(studentHtmlOutputFile, htmlContent);
+      console.log(
+        `   * Saved HTML schedule matrix (with Google Sheets styling) to: ${colors.dim}${studentHtmlOutputFile}${colors.reset}\n`,
       );
     } catch (error) {
       console.error(

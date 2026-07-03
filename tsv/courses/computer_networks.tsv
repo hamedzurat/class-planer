@@ -1,0 +1,12 @@
+Section	Faculty Code	Faculty Name	Room	Day	Time
+A	ASKP	Al-Sakib Khan Pathan	403	sat	08:30 - 09:50
+B	MNK	Muhammad Nomani Kabir	403	sat	09:51 - 11:10
+C	ASKP	Al-Sakib Khan Pathan	405	sat	11:11 - 12:30
+D	AIMM	Abdullah Ibne Masud Mahi	402	sat	12:31 - 13:50
+E	AIMM	Abdullah Ibne Masud Mahi	324	sat	13:51 - 15:10
+F	AKMMI	A.K.M. Muzahidul Islam	402	sun	08:30 - 09:50
+G			403	sun	09:51 - 11:10
+H	AKMMI	A.K.M. Muzahidul Islam	403	sun	11:11 - 12:30
+I			403	sun	12:31 - 13:50
+J	ME	Mohammad Mamun Elahi	401	sun	13:51 - 15:10
+K	ME	Mohammad Mamun Elahi	404	sun	15:11 - 16:30
