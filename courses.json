@@ -60,5 +60,19 @@
     "CSE 3712": "CN-lab",
     "PHY 2106": "PHY-lab",
     "PMG 4101": "PMG"
+  },
+  "sabbir": {
+    "ACT 2111": "ACT",
+    "CSE 3421": "SE",
+    "CSE 3712": "CN-lab",
+    "ECO 4101": "Econ",
+    "CSE 4165": "WEB"
+  },
+  "azmir": {
+    "CSE 3421": "SE",
+    "CSE 4326": "MM-lab",
+    "CSE 4165": "WP",
+    "CSE 4889": "ML",
+    "ACT 2111": "FMA"
   }
 }
