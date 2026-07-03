@@ -89,5 +89,12 @@
     "CSE 4889": "ML",
     "ECO 4101": "Econ",
     "PMG 4101": "PMG"
+  },
+  "torongo": {
+    "CSE 4325": "MM",
+    "CSE 4326": "MM-lab",
+    "CSE 4889": "ML",
+    "CSE 4165": "WEB",
+    "PMG 4101": "PMG"
   }
 }
