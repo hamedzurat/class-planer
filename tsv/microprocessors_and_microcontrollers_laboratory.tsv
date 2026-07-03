@@ -1,0 +1,15 @@
+Section	Faculty Code	Faculty Name	Room	Day	Time
+A	MSTR	Md. Shafqat Talukder	501	sat	08:30 - 11:00
+B	ArBh	Arnab Bhattacharjee	825	sat	11:11 - 13:40
+C			825	sun	08:30 - 11:00
+D	RNF	Rafid Nahiyan Farabi	825	sun	11:11 - 13:40
+E	AbHn	Md. Abid Hossain	505	sun	14:00 - 16:30
+F	ArBh	Arnab Bhattacharjee	501	tue	08:30 - 11:00
+G			825	tue	11:11 - 13:40
+H	MSTR	Md. Shafqat Talukder	501	tue	14:00 - 16:30
+I			501	wed	08:30 - 11:00
+J	RNF	Rafid Nahiyan Farabi	511	wed	11:11 - 13:40
+K			825	wed	14:00 - 16:30
+L			825	wed	08:30 - 11:00
+M	MfSh	Miftahul Sheikh	504	mon	11:11 - 13:40
+N			511	wed	14:00 - 16:30
