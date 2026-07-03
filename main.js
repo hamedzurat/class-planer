@@ -2,9 +2,6 @@ import { mkdir } from "node:fs/promises";
 
 const SECTION_FILE = "res.json";
 const COURSES_CONFIG_FILE = "courses.json";
-const OUTPUT_DIR = "tsv";
-const FACULTY_FILE = `${OUTPUT_DIR}/faculty.tsv`;
-const OUTPUT_FILE = `${OUTPUT_DIR}/display.tsv`;
 
 const TIME_SLOTS = ["8:30", "9:50", "11:10", "12:30", "13:50", "15:10"];
 
@@ -74,7 +71,7 @@ function isSectionStartingInSlot(section, targetTime, expectedDays) {
 
 function detectCollisions(courses) {
   console.log(
-    `${colors.cyan}Analyzing room and faculty bookings for collisions...${colors.reset}`,
+    `   ${colors.cyan}Analyzing room and faculty bookings for collisions...${colors.reset}`,
   );
   const assignments = [];
 
@@ -113,26 +110,25 @@ function detectCollisions(courses) {
       const a1 = assignments[i];
       const a2 = assignments[j];
 
-      // Check if they are scheduled on the same day and overlap in time
       if (
         a1.day === a2.day &&
         Math.max(a1.startMin, a2.startMin) < Math.min(a1.endMin, a2.endMin)
       ) {
-        // 1. Room collision
+        // Room collision
         if (a1.room && a1.room === a2.room) {
           console.warn(
-            `   ${colors.yellow}[Collision] Room ${a1.room} double-booking on ${a1.day}:${colors.reset}\n` +
-              `             * ${a1.courseName} (${a1.courseCode}) Sec ${a1.sectionName} (${a1.rawStart} - ${a1.rawEnd})\n` +
-              `             * ${a2.courseName} (${a2.courseCode}) Sec ${a2.sectionName} (${a2.rawStart} - ${a2.rawEnd})`,
+            `      ${colors.yellow}[Collision] Room ${a1.room} double-booking on ${a1.day}:${colors.reset}\n` +
+              `                * ${a1.courseName} (${a1.courseCode}) Sec ${a1.sectionName} (${a1.rawStart} - ${a1.rawEnd})\n` +
+              `                * ${a2.courseName} (${a2.courseCode}) Sec ${a2.sectionName} (${a2.rawStart} - ${a2.rawEnd})`,
           );
           collisionsFound = true;
         }
-        // 2. Faculty collision
+        // Faculty collision
         if (a1.facultyCode && a1.facultyCode === a2.facultyCode) {
           console.warn(
-            `   ${colors.yellow}[Collision] Faculty ${a1.facultyName} (${a1.facultyCode}) double-booking on ${a1.day}:${colors.reset}\n` +
-              `             * ${a1.courseName} (${a1.courseCode}) Sec ${a1.sectionName} (${a1.rawStart} - ${a1.rawEnd})\n` +
-              `             * ${a2.courseName} (${a2.courseCode}) Sec ${a2.sectionName} (${a2.rawStart} - ${a2.rawEnd})`,
+            `      ${colors.yellow}[Collision] Faculty ${a1.facultyName} (${a1.facultyCode}) double-booking on ${a1.day}:${colors.reset}\n` +
+              `                * ${a1.courseName} (${a1.courseCode}) Sec ${a1.sectionName} (${a1.rawStart} - ${a1.rawEnd})\n` +
+              `                * ${a2.courseName} (${a2.courseCode}) Sec ${a2.sectionName} (${a2.rawStart} - ${a2.rawEnd})`,
           );
           collisionsFound = true;
         }
@@ -142,23 +138,23 @@ function detectCollisions(courses) {
 
   if (!collisionsFound) {
     console.log(
-      `   ${colors.green}*${colors.reset} No room or faculty double-bookings detected.\n`,
+      `      ${colors.green}*${colors.reset} No room or faculty double-bookings detected.\n`,
     );
   } else {
     console.log("");
   }
 }
 
-async function validateOutputs(courses) {
+async function validateOutputs(courses, outputDir, facultyFile, outputFile) {
   console.log(
-    `${colors.cyan}Running automated output verification...${colors.reset}`,
+    `   ${colors.cyan}Running automated output verification...${colors.reset}`,
   );
   const errors = [];
   const expectedFaculties = new Map();
 
   for (const course of courses) {
     const expectedTsvName = `${safeFileName(course.course_name)}.tsv`;
-    const tsvPath = `${OUTPUT_DIR}/${expectedTsvName}`;
+    const tsvPath = `${outputDir}/${expectedTsvName}`;
 
     const file = Bun.file(tsvPath);
     if (!(await file.exists())) {
@@ -215,9 +211,9 @@ async function validateOutputs(courses) {
   }
 
   // Check faculty.tsv
-  const facFile = Bun.file(FACULTY_FILE);
+  const facFile = Bun.file(facultyFile);
   if (!(await facFile.exists())) {
-    errors.push(`Missing faculty list: ${FACULTY_FILE}`);
+    errors.push(`Missing faculty list: ${facultyFile}`);
   } else {
     const content = await facFile.text();
     const lines = content.split(/\r?\n/).filter((l) => l.trim().length > 0);
@@ -234,10 +230,10 @@ async function validateOutputs(courses) {
     expectedFaculties.forEach((name, code) => {
       const row = rows.find((r) => r["Faculty Code"] === code);
       if (!row) {
-        errors.push(`Faculty "${name}" (${code}) missing from ${FACULTY_FILE}`);
+        errors.push(`Faculty "${name}" (${code}) missing from ${facultyFile}`);
       } else if (row["Faculty Name"] !== name) {
         errors.push(
-          `Faculty Name mismatch in ${FACULTY_FILE} for ${code}: expected "${name}", got "${row["Faculty Name"]}"`,
+          `Faculty Name mismatch in ${facultyFile} for ${code}: expected "${name}", got "${row["Faculty Name"]}"`,
         );
       }
     });
@@ -245,69 +241,39 @@ async function validateOutputs(courses) {
 
   if (errors.length === 0) {
     console.log(
-      `   ${colors.green}*${colors.reset} Verification passed: All generated files match source data perfectly.\n`,
+      `      ${colors.green}*${colors.reset} Verification passed: All generated files match source data perfectly.\n`,
     );
   } else {
     console.error(
-      `${colors.red}Verification failed with ${errors.length} errors:${colors.reset}`,
+      `   ${colors.red}Verification failed with ${errors.length} errors:${colors.reset}`,
     );
-    errors.forEach((e) => console.error(`   - ${e}`));
+    errors.forEach((e) => console.error(`      - ${e}`));
   }
 }
 
-async function main() {
+async function processPerson(studentId, targetConfig, rawCourses) {
   console.log(
-    `\n${colors.bright}${colors.cyan}Starting class plan processing pipeline...${colors.reset}\n`,
+    `${colors.bright}${colors.cyan}--- Processing for ID: ${studentId} ---${colors.reset}`,
   );
 
-  // Step 1: Fetch/Filter Courses
-  console.log(`${colors.cyan}Reading ${SECTION_FILE}...${colors.reset}`);
-  let filteredCourses = [];
-  let targetConfig = {};
+  const outputDir = studentId;
+  const facultyFile = `${outputDir}/faculty.tsv`;
+  const outputFile = `${outputDir}/display.tsv`;
 
-  try {
-    const file = Bun.file(SECTION_FILE);
-    if (!(await file.exists())) {
-      console.error(
-        `${colors.red}Error: ${SECTION_FILE} not found. Please provide the file.${colors.reset}`,
-      );
-      return;
-    }
+  const targetCodes = Object.keys(targetConfig);
 
-    const configFile = Bun.file(COURSES_CONFIG_FILE);
-    if (!(await configFile.exists())) {
-      console.error(
-        `${colors.red}Error: ${COURSES_CONFIG_FILE} not found. Please create it.${colors.reset}`,
-      );
-      return;
-    }
-    targetConfig = await configFile.json();
-    const targetCodes = Object.keys(targetConfig);
+  console.log(`   Filtering courses...`);
+  const filteredCourses = rawCourses.filter((course) =>
+    targetCodes.includes(course.formal_code),
+  );
 
-    const data = await file.json();
+  console.log(
+    `   ${colors.green}Success! Total courses found: ${colors.bright}${filteredCourses.length}${colors.reset}\n`,
+  );
 
-    console.log(`${colors.cyan}Filtering courses...${colors.reset}`);
-    if (data && data.data && Array.isArray(data.data.courses)) {
-      filteredCourses = data.data.courses.filter((course) =>
-        targetCodes.includes(course.formal_code),
-      );
-
-      console.log(
-        `${colors.green}Success! Filtered courses from: ${colors.bright}${SECTION_FILE}${colors.reset}`,
-      );
-      console.log(
-        `${colors.green}Total courses found: ${colors.bright}${filteredCourses.length}${colors.reset}\n`,
-      );
-    } else {
-      console.error(
-        `${colors.red}Error: Unexpected JSON structure in res.json.${colors.reset}`,
-      );
-      return;
-    }
-  } catch (error) {
-    console.error(
-      `${colors.red}An error occurred during course filtering:${colors.reset}`,
-      error,
+  if (filteredCourses.length === 0) {
+    console.warn(
+      `   ${colors.yellow}[Warning] No courses found for ID ${studentId}. Skipping generation.${colors.reset}\n`,
     );
     return;
   }
@@ -315,12 +281,10 @@ async function main() {
   // Collision detection
   detectCollisions(filteredCourses);
 
-  // Step 2: Generate course TSVs & faculty.tsv
-  console.log(
-    `${colors.cyan}Generating course TSVs & faculty list...${colors.reset}`,
-  );
+  // Generate course TSVs & faculty.tsv
+  console.log(`   Generating course TSVs & faculty list...`);
   try {
-    await mkdir(OUTPUT_DIR, { recursive: true });
+    await mkdir(outputDir, { recursive: true });
     const uniqueFaculties = new Map();
 
     for (const course of filteredCourses) {
@@ -344,7 +308,7 @@ async function main() {
           !seatWarningGiven
         ) {
           console.warn(
-            `   ${colors.yellow}[Warning] Course ${course.course_name} (${course.course_code}) has sections with differing total seats (${firstSectionSeats} vs ${section.total_seats})${colors.reset}`,
+            `      ${colors.yellow}[Warning] Course ${course.course_name} (${course.course_code}) has sections with differing total seats (${firstSectionSeats} vs ${section.total_seats})${colors.reset}`,
           );
           seatWarningGiven = true;
         }
@@ -383,7 +347,7 @@ async function main() {
 
           if (t1 !== t2) {
             console.error(
-              `   ${colors.red}[Error] Schedule anomaly: Times don't match for course ${course.course_code} section ${section.section_name}${colors.reset}`,
+              `      ${colors.red}[Error] Schedule anomaly: Times don't match for course ${course.course_code} section ${section.section_name}${colors.reset}`,
             );
             hasError = true;
           }
@@ -396,7 +360,7 @@ async function main() {
             displayDay = "Sunday";
           } else {
             console.error(
-              `   ${colors.red}[Error] Schedule anomaly: Unexpected day pairing (${days.join(", ")}) for course ${course.course_code} section ${section.section_name}. Expected Sat+Tue or Sun+Wed.${colors.reset}`,
+              `      ${colors.red}[Error] Schedule anomaly: Unexpected day pairing (${days.join(", ")}) for course ${course.course_code} section ${section.section_name}. Expected Sat+Tue or Sun+Wed.${colors.reset}`,
             );
             hasError = true;
           }
@@ -404,7 +368,7 @@ async function main() {
           displayTime = t1;
         } else {
           console.error(
-            `   ${colors.red}[Error] Schedule anomaly: Unexpected number of days (${section.schedule.length}) for course ${course.course_code} section ${section.section_name}.${colors.reset}`,
+            `      ${colors.red}[Error] Schedule anomaly: Unexpected number of days (${section.schedule.length}) for course ${course.course_code} section ${section.section_name}.${colors.reset}`,
           );
           hasError = true;
         }
@@ -423,7 +387,7 @@ async function main() {
           dayCheck.includes("friday")
         ) {
           console.warn(
-            `   ${colors.yellow}[Warning] Course ${course.course_name} (${course.course_code}) section ${section.section_name} is scheduled on a Monday, Thursday, or Friday: ${displayDay}${colors.reset}`,
+            `      ${colors.yellow}[Warning] Course ${course.course_name} (${course.course_code}) section ${section.section_name} is scheduled on a Monday, Thursday, or Friday: ${displayDay}${colors.reset}`,
           );
         }
 
@@ -451,10 +415,10 @@ async function main() {
       }
 
       const safeName = safeFileName(course.course_name);
-      const courseFileName = `${OUTPUT_DIR}/${safeName}.tsv`;
+      const courseFileName = `${outputDir}/${safeName}.tsv`;
       await Bun.write(courseFileName, sectionRows.join("\n"));
       console.log(
-        `   ${colors.green}*${colors.reset} Saved sections list to: ${colors.dim}${courseFileName}${colors.reset}`,
+        `      ${colors.green}*${colors.reset} Saved sections list to: ${colors.dim}${courseFileName}${colors.reset}`,
       );
     }
 
@@ -467,20 +431,20 @@ async function main() {
       facultyRows.push(`${name}\t${code}`);
     }
 
-    await Bun.write(FACULTY_FILE, facultyRows.join("\n"));
+    await Bun.write(facultyFile, facultyRows.join("\n"));
     console.log(
-      `   ${colors.green}*${colors.reset} Saved faculty list to: ${colors.dim}${FACULTY_FILE}${colors.reset}\n`,
+      `      ${colors.green}*${colors.reset} Saved faculty list to: ${colors.dim}${facultyFile}${colors.reset}\n`,
     );
   } catch (error) {
     console.error(
-      `${colors.red}An error occurred during TSV generation:${colors.reset}\n`,
+      `   ${colors.red}An error occurred during TSV generation:${colors.reset}\n`,
       error,
     );
     return;
   }
 
-  // Step 3: Generate Display Matrix
-  console.log(`${colors.cyan}Generating display matrix...${colors.reset}`);
+  // Generate Display Matrix
+  console.log(`   Generating display matrix...`);
   try {
     const theoryCourses = [];
     const labCourses = [];
@@ -634,23 +598,92 @@ async function main() {
     finalRows.push(footerRow);
 
     const tsvContent = finalRows.map((r) => r.join("\t")).join("\n");
-    await Bun.write(OUTPUT_FILE, tsvContent);
+    await Bun.write(outputFile, tsvContent);
     console.log(
-      `   ${colors.green}*${colors.reset} Saved schedule to: ${colors.dim}${OUTPUT_FILE}${colors.reset}\n`,
+      `      ${colors.green}*${colors.reset} Saved schedule to: ${colors.dim}${outputFile}${colors.reset}\n`,
     );
 
-    // Step 4: Verification
-    await validateOutputs(filteredCourses);
-
-    console.log(
-      `${colors.bright}${colors.green}Processing successfully completed!${colors.reset}\n`,
-    );
+    // Verification
+    await validateOutputs(filteredCourses, outputDir, facultyFile, outputFile);
   } catch (error) {
     console.error(
-      `${colors.red}An error occurred during display matrix generation:${colors.reset}\n`,
+      `   ${colors.red}An error occurred during display matrix generation:${colors.reset}\n`,
       error,
     );
   }
+}
+
+async function main() {
+  console.log(
+    `\n${colors.bright}${colors.cyan}Starting class plan processing pipeline...${colors.reset}\n`,
+  );
+
+  console.log(`${colors.cyan}Reading ${SECTION_FILE}...${colors.reset}`);
+  let rawCourses = [];
+
+  try {
+    const file = Bun.file(SECTION_FILE);
+    if (!(await file.exists())) {
+      console.error(
+        `${colors.red}Error: ${SECTION_FILE} not found. Please provide the file.${colors.reset}`,
+      );
+      return;
+    }
+
+    const data = await file.json();
+    if (data && data.data && Array.isArray(data.data.courses)) {
+      rawCourses = data.data.courses;
+    } else {
+      console.error(
+        `${colors.red}Error: Unexpected JSON structure in res.json.${colors.reset}`,
+      );
+      return;
+    }
+  } catch (error) {
+    console.error(
+      `${colors.red}An error occurred during loading res.json:${colors.reset}`,
+      error,
+    );
+    return;
+  }
+
+  // Load config of all people
+  console.log(`${colors.cyan}Reading ${COURSES_CONFIG_FILE}...${colors.reset}`);
+  let peopleConfigs = {};
+
+  try {
+    const configFile = Bun.file(COURSES_CONFIG_FILE);
+    if (!(await configFile.exists())) {
+      console.error(
+        `${colors.red}Error: ${COURSES_CONFIG_FILE} not found. Please create it.${colors.reset}`,
+      );
+      return;
+    }
+    peopleConfigs = await configFile.json();
+  } catch (error) {
+    console.error(
+      `${colors.red}Error: Failed to parse ${COURSES_CONFIG_FILE}:${colors.reset}`,
+      error,
+    );
+    return;
+  }
+
+  const peopleIds = Object.keys(peopleConfigs);
+  if (peopleIds.length === 0) {
+    console.warn(
+      `${colors.yellow}[Warning] No configurations found in ${COURSES_CONFIG_FILE}.${colors.reset}`,
+    );
+    return;
+  }
+
+  // Process each person
+  for (const studentId of peopleIds) {
+    await processPerson(studentId, peopleConfigs[studentId], rawCourses);
+  }
+
+  console.log(
+    `${colors.bright}${colors.green}All processing successfully completed!${colors.reset}\n`,
+  );
 }
 
 main();
