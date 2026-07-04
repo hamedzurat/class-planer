@@ -226,7 +226,7 @@ export async function runSelections(api, config, traffic = null) {
       results.push({
         formalCode: selections[i].formal_code,
         ok: false,
-        error: err.message,
+        error: err instanceof Error ? err.message : String(err),
       });
     }
 

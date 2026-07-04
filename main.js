@@ -75,7 +75,10 @@ function detectCollisions(studentId, courses) {
   console.log(
     `   ${colors.cyan}Analyzing room and faculty bookings for collisions (${studentId})...${colors.reset}`,
   );
-  const assignments = [];
+
+  // Group assignments by day first — avoids O(n²) cross-day comparisons
+  /** @type {Map<string, Array<object>>} */
+  const byDay = new Map();
 
   for (const course of courses) {
     for (const section of course.sections) {
@@ -84,55 +87,56 @@ function detectCollisions(studentId, courses) {
         const [eh, em] = sched.end_time.split(":").map(Number);
         const startMin = sh * 60 + sm;
         const endMin = eh * 60 + em;
-
         const roomMatch = (section.room_details || "").match(/^\d+/);
         const room = roomMatch ? roomMatch[0] : "";
-
-        assignments.push({
+        const entry = {
           courseCode: course.course_code,
           courseName: course.course_name,
           sectionName: section.section_name,
           facultyCode: section.faculty_code || "",
           facultyName: section.faculty_name || "",
-          room: room,
+          room,
           day: sched.day,
           startMin,
           endMin,
           rawStart: sched.start_time,
           rawEnd: sched.end_time,
-        });
+        };
+        if (!byDay.has(sched.day)) byDay.set(sched.day, []);
+        byDay.get(sched.day).push(entry);
       }
     }
   }
 
   let collisionsFound = false;
 
-  for (let i = 0; i < assignments.length; i++) {
-    for (let j = i + 1; j < assignments.length; j++) {
-      const a1 = assignments[i];
-      const a2 = assignments[j];
+  for (const [, assignments] of byDay) {
+    for (let i = 0; i < assignments.length; i++) {
+      for (let j = i + 1; j < assignments.length; j++) {
+        const a1 = assignments[i];
+        const a2 = assignments[j];
 
-      if (
-        a1.day === a2.day &&
-        Math.max(a1.startMin, a2.startMin) < Math.min(a1.endMin, a2.endMin)
-      ) {
-        // Room collision
-        if (a1.room && a1.room === a2.room) {
-          console.warn(
-            `      ${colors.yellow}[Collision] Room ${a1.room} double-booking on ${a1.day}:${colors.reset}\n` +
-              `                * ${a1.courseName} (${a1.courseCode}) Sec ${a1.sectionName} (${a1.rawStart} - ${a1.rawEnd})\n` +
-              `                * ${a2.courseName} (${a2.courseCode}) Sec ${a2.sectionName} (${a2.rawStart} - ${a2.rawEnd})`,
-          );
-          collisionsFound = true;
-        }
-        // Faculty collision
-        if (a1.facultyCode && a1.facultyCode === a2.facultyCode) {
-          console.warn(
-            `      ${colors.yellow}[Collision] Faculty ${a1.facultyName} (${a1.facultyCode}) double-booking on ${a1.day}:${colors.reset}\n` +
-              `                * ${a1.courseName} (${a1.courseCode}) Sec ${a1.sectionName} (${a1.rawStart} - ${a1.rawEnd})\n` +
-              `                * ${a2.courseName} (${a2.courseCode}) Sec ${a2.sectionName} (${a2.rawStart} - ${a2.rawEnd})`,
-          );
-          collisionsFound = true;
+        if (
+          Math.max(a1.startMin, a2.startMin) < Math.min(a1.endMin, a2.endMin)
+        ) {
+          // Room collision
+          if (a1.room && a1.room === a2.room) {
+            console.warn(
+              `      ${colors.yellow}[Collision] Room ${a1.room} double-booking on ${a1.day}:${colors.reset}\n` +
+                `                * ${a1.courseName} (${a1.courseCode}) Sec ${a1.sectionName} (${a1.rawStart} - ${a1.rawEnd})\n` +
+                `                * ${a2.courseName} (${a2.courseCode}) Sec ${a2.sectionName} (${a2.rawStart} - ${a2.rawEnd})`,
+            );
+            collisionsFound = true;
+          }
+          // Faculty collision
+          if (a1.facultyCode && a1.facultyCode === a2.facultyCode) {
+            console.warn(
+              `      ${colors.yellow}[Collision] Faculty ${a1.facultyName} (${a1.facultyCode}) double-booking on ${a1.day}:${colors.reset}\n` +
+                `                * ${a1.courseName} (${a1.courseCode}) Sec ${a1.sectionName} (${a1.rawStart} - ${a1.rawEnd})\n` +
+                `                * ${a2.courseName} (${a2.courseCode}) Sec ${a2.sectionName} (${a2.rawStart} - ${a2.rawEnd})`,
+            );
+            collisionsFound = true;
+          }
         }
       }
     }
@@ -370,6 +374,190 @@ function generateHtmlDisplay(studentId, activeColumns, finalRows) {
 </html>
 `;
   return html;
+}
+
+/**
+ * @param {string} studentId
+ * @param {Record<string, string>} targetConfig  formal_code → short name map
+ * @param {Array<object>} allCourses             full filtered course list
+ * @param {boolean} generateHtml
+ * @param {boolean} generateTsv
+ */
+async function generateMatrixAndFaculty(
+  studentId,
+  targetConfig,
+  allCourses,
+  generateHtml,
+  generateTsv,
+) {
+  const targetCodes = Object.keys(targetConfig);
+  const studentCourses = allCourses.filter((course) =>
+    targetCodes.includes(course.formal_code),
+  );
+
+  if (studentCourses.length === 0) {
+    console.warn(
+      `   ${colors.yellow}[Warning] No courses found for ID ${studentId}. Skipping generation.${colors.reset}\n`,
+    );
+    return;
+  }
+
+  if (generateTsv) {
+    // Perform collision detection per student
+    detectCollisions(studentId, studentCourses);
+
+    // Generate student-specific faculty list
+    try {
+      const studentUniqueFaculties = new Map();
+      for (const course of studentCourses) {
+        for (const section of course.sections) {
+          const facultyName = section.faculty_name || "";
+          const facultyCode = section.faculty_code || "";
+          if (facultyName && facultyCode && facultyName !== "TBA" && facultyCode !== "TBA") {
+            studentUniqueFaculties.set(facultyCode, facultyName);
+          }
+        }
+      }
+
+      const studentFacultyRows = ["Faculty Name\tFaculty Code"];
+      const sortedStudentFaculties = Array.from(studentUniqueFaculties.entries()).sort(
+        (a, b) => a[0].localeCompare(b[0]),
+      );
+      for (const [code, name] of sortedStudentFaculties) {
+        studentFacultyRows.push(`${name}\t${code}`);
+      }
+
+      const studentFacultyOutputFile = `${OUTPUT_DIR}/faculty/${studentId}.tsv`;
+      await Bun.write(studentFacultyOutputFile, studentFacultyRows.join("\n"));
+      console.log(
+        `   * Saved faculty list to: ${colors.dim}${studentFacultyOutputFile}${colors.reset}`,
+      );
+    } catch (error) {
+      console.error(
+        `   ${colors.red}An error occurred during student faculty list generation:${colors.reset}\n`,
+        error,
+      );
+    }
+  }
+
+  // Generate matrix and optionally write TSV/HTML
+  try {
+    const theoryCourses = [];
+    const labCourses = [];
+
+    for (const c of studentCourses) {
+      const short = targetConfig[c.formal_code] || generateShortName(c.course_name);
+      if (short.toLowerCase().endsWith("-lab")) {
+        labCourses.push({ code: c.course_code, short });
+      } else {
+        theoryCourses.push({ code: c.course_code, short });
+      }
+    }
+
+    theoryCourses.sort((a, b) => a.code.localeCompare(b.code));
+    labCourses.sort((a, b) => a.code.localeCompare(b.code));
+
+    const columns = [{ type: "time", groupName: "", courseShort: "TIME" }];
+
+    for (let gIdx = 0; gIdx < DAY_GROUPS.length; gIdx++) {
+      const group = DAY_GROUPS[gIdx];
+      if (group.type === "none") {
+        columns.push({ type: "none", groupIndex: gIdx, groupName: group.name, courseShort: "xxx" });
+      } else {
+        const coursesInGroup = group.type === "theory" ? theoryCourses : labCourses;
+        for (const c of coursesInGroup) {
+          columns.push({ type: group.type, groupIndex: gIdx, groupName: group.name, courseCode: c.code, courseShort: c.short });
+        }
+      }
+    }
+
+    const allSlotRows = [];
+
+    for (const time of TIME_SLOTS) {
+      const colMatches = columns.map((col) => {
+        if (col.type === "time") return [time];
+        if (col.type === "none") return ["x"];
+        const c = studentCourses.find((cc) => cc.course_code === col.courseCode);
+        const matches = [];
+        if (c) {
+          const group = DAY_GROUPS[col.groupIndex];
+          for (const section of c.sections) {
+            if (isSectionStartingInSlot(section, time, group.days)) {
+              matches.push(section.faculty_code ? `${section.faculty_code}-${section.section_name}` : section.section_name);
+            }
+          }
+        }
+        return matches;
+      });
+
+      let maxMatches = 0;
+      for (let i = 1; i < columns.length; i++) {
+        if (columns[i].type !== "none" && colMatches[i].length > maxMatches) maxMatches = colMatches[i].length;
+      }
+
+      for (let rowIdx = 0; rowIdx < maxMatches; rowIdx++) {
+        allSlotRows.push(
+          columns.map((col, colIdx) => {
+            if (col.type === "time") return rowIdx === 0 ? time : "";
+            if (col.type === "none") return "x";
+            return colMatches[colIdx][rowIdx] || "";
+          }),
+        );
+      }
+    }
+
+    const activeColumnIndices = [0];
+    for (let colIdx = 1; colIdx < columns.length; colIdx++) {
+      if (columns[colIdx].type === "none") {
+        activeColumnIndices.push(colIdx);
+      } else if (allSlotRows.some((row) => row[colIdx] !== "" && row[colIdx] !== "x")) {
+        activeColumnIndices.push(colIdx);
+      }
+    }
+
+    const activeColumns = activeColumnIndices.map((idx) => columns[idx]);
+    const finalRows = [];
+
+    // Header row 1: group names
+    const headerRow1 = ["TIME"];
+    let lastGroupName = null;
+    for (let i = 1; i < activeColumns.length; i++) {
+      const col = activeColumns[i];
+      headerRow1.push(col.groupName !== lastGroupName ? col.groupName : "");
+      lastGroupName = col.groupName;
+    }
+    finalRows.push(headerRow1);
+
+    // Header row 2: course short names
+    const headerRow2 = [""];
+    for (let i = 1; i < activeColumns.length; i++) headerRow2.push(activeColumns[i].courseShort);
+    finalRows.push(headerRow2);
+
+    // Data rows
+    for (const row of allSlotRows) {
+      const filteredRow = activeColumnIndices.map((idx) => row[idx]);
+      if (filteredRow.slice(1).some((val) => val !== "" && val !== "x")) {
+        finalRows.push(filteredRow);
+      }
+    }
+
+    if (generateTsv) {
+      const studentOutputFile = `${OUTPUT_DIR}/displays/${studentId}.tsv`;
+      await Bun.write(studentOutputFile, finalRows.map((r) => r.join("\t")).join("\n"));
+      console.log(`   * Saved schedule matrix to: ${colors.dim}${studentOutputFile}${colors.reset}`);
+    }
+
+    if (generateHtml) {
+      const studentHtmlOutputFile = `html/${studentId}.html`;
+      await Bun.write(studentHtmlOutputFile, generateHtmlDisplay(studentId, activeColumns, finalRows));
+      console.log(`   * Saved HTML schedule matrix (with Google Sheets styling) to: ${colors.dim}${studentHtmlOutputFile}${colors.reset}`);
+    }
+  } catch (error) {
+    console.error(
+      `   ${colors.red}An error occurred during display matrix generation:${colors.reset}\n`,
+      error,
+    );
+  }
 }
 
 async function main() {
@@ -655,252 +843,6 @@ async function main() {
     }
   }
 
-  // Define generation helper
-  async function generateMatrixAndFaculty(
-    studentId,
-    targetConfig,
-    generateHtml,
-    generateTsv,
-  ) {
-    const targetCodes = Object.keys(targetConfig);
-    const studentCourses = filteredCourses.filter((course) =>
-      targetCodes.includes(course.formal_code),
-    );
-
-    if (studentCourses.length === 0) {
-      console.warn(
-        `   ${colors.yellow}[Warning] No courses found for ID ${studentId}. Skipping generation.${colors.reset}\n`,
-      );
-      return;
-    }
-
-    if (generateTsv) {
-      // Perform collision detection per student
-      detectCollisions(studentId, studentCourses);
-
-      // Generate student-specific faculty list
-      try {
-        const studentUniqueFaculties = new Map();
-        for (const course of studentCourses) {
-          for (const section of course.sections) {
-            let facultyName = section.faculty_name || "";
-            let facultyCode = section.faculty_code || "";
-            if (
-              facultyName &&
-              facultyCode &&
-              facultyName !== "TBA" &&
-              facultyCode !== "TBA"
-            ) {
-              studentUniqueFaculties.set(facultyCode, facultyName);
-            }
-          }
-        }
-
-        const studentFacultyRows = ["Faculty Name\tFaculty Code"];
-        const sortedStudentFaculties = Array.from(
-          studentUniqueFaculties.entries(),
-        ).sort((a, b) => a[0].localeCompare(b[0]));
-
-        for (const [code, name] of sortedStudentFaculties) {
-          studentFacultyRows.push(`${name}\t${code}`);
-        }
-
-        const studentFacultyOutputFile = `${OUTPUT_DIR}/faculty/${studentId}.tsv`;
-        await Bun.write(
-          studentFacultyOutputFile,
-          studentFacultyRows.join("\n"),
-        );
-        console.log(
-          `   * Saved faculty list to: ${colors.dim}${studentFacultyOutputFile}${colors.reset}`,
-        );
-      } catch (error) {
-        console.error(
-          `   ${colors.red}An error occurred during student faculty list generation:${colors.reset}\n`,
-          error,
-        );
-      }
-    }
-
-    // Generate matrix and optionally write TSV/HTML
-    try {
-      const theoryCourses = [];
-      const labCourses = [];
-
-      for (const c of studentCourses) {
-        const short =
-          targetConfig[c.formal_code] || generateShortName(c.course_name);
-        if (short.toLowerCase().endsWith("-lab")) {
-          labCourses.push({ code: c.course_code, short });
-        } else {
-          theoryCourses.push({ code: c.course_code, short });
-        }
-      }
-
-      theoryCourses.sort((a, b) => a.code.localeCompare(b.code));
-      labCourses.sort((a, b) => a.code.localeCompare(b.code));
-
-      const columns = [];
-      columns.push({ type: "time", groupName: "", courseShort: "TIME" });
-
-      for (let gIdx = 0; gIdx < DAY_GROUPS.length; gIdx++) {
-        const group = DAY_GROUPS[gIdx];
-        if (group.type === "none") {
-          columns.push({
-            type: "none",
-            groupIndex: gIdx,
-            groupName: group.name,
-            courseShort: "xxx",
-          });
-        } else {
-          const coursesInGroup =
-            group.type === "theory" ? theoryCourses : labCourses;
-          for (const c of coursesInGroup) {
-            columns.push({
-              type: group.type,
-              groupIndex: gIdx,
-              groupName: group.name,
-              courseCode: c.code,
-              courseShort: c.short,
-            });
-          }
-        }
-      }
-
-      const allSlotRows = [];
-
-      for (let slotIdx = 0; slotIdx < TIME_SLOTS.length; slotIdx++) {
-        const time = TIME_SLOTS[slotIdx];
-
-        const colMatches = columns.map((col) => {
-          if (col.type === "time") {
-            return [time];
-          }
-          if (col.type === "none") {
-            return ["x"];
-          }
-
-          const c = studentCourses.find(
-            (cc) => cc.course_code === col.courseCode,
-          );
-          const matches = [];
-          if (c) {
-            const group = DAY_GROUPS[col.groupIndex];
-            for (const section of c.sections) {
-              if (isSectionStartingInSlot(section, time, group.days)) {
-                const displayVal = section.faculty_code
-                  ? `${section.faculty_code}-${section.section_name}`
-                  : section.section_name;
-                matches.push(displayVal);
-              }
-            }
-          }
-          return matches;
-        });
-
-        let maxMatches = 0;
-        for (let i = 1; i < columns.length; i++) {
-          if (columns[i].type !== "none" && colMatches[i].length > maxMatches) {
-            maxMatches = colMatches[i].length;
-          }
-        }
-
-        if (maxMatches > 0) {
-          for (let rowIdx = 0; rowIdx < maxMatches; rowIdx++) {
-            const rowCells = columns.map((col, colIdx) => {
-              if (col.type === "time") {
-                return rowIdx === 0 ? time : "";
-              }
-              if (col.type === "none") {
-                return "x";
-              }
-              return colMatches[colIdx][rowIdx] || "";
-            });
-            allSlotRows.push(rowCells);
-          }
-        }
-      }
-
-      const activeColumnIndices = [0];
-      for (let colIdx = 1; colIdx < columns.length; colIdx++) {
-        let hasData = false;
-        if (columns[colIdx].type === "none") {
-          hasData = true;
-        } else {
-          for (const row of allSlotRows) {
-            const val = row[colIdx];
-            if (val !== "" && val !== "x") {
-              hasData = true;
-              break;
-            }
-          }
-        }
-        if (hasData) {
-          activeColumnIndices.push(colIdx);
-        }
-      }
-
-      const activeColumns = activeColumnIndices.map((idx) => columns[idx]);
-      const finalRows = [];
-
-      const headerRow1 = ["TIME"];
-      let lastGroupName = null;
-      for (let i = 1; i < activeColumns.length; i++) {
-        const col = activeColumns[i];
-        if (col.groupName !== lastGroupName) {
-          headerRow1.push(col.groupName);
-          lastGroupName = col.groupName;
-        } else {
-          headerRow1.push("");
-        }
-      }
-      finalRows.push(headerRow1);
-
-      const headerRow2 = [""];
-      for (let i = 1; i < activeColumns.length; i++) {
-        headerRow2.push(activeColumns[i].courseShort);
-      }
-      finalRows.push(headerRow2);
-
-      for (const row of allSlotRows) {
-        const filteredRow = activeColumnIndices.map((idx) => row[idx]);
-        const hasContent = filteredRow
-          .slice(1)
-          .some((val) => val !== "" && val !== "x");
-        if (hasContent) {
-          finalRows.push(filteredRow);
-        }
-      }
-
-      if (generateTsv) {
-        const studentOutputFile = `${OUTPUT_DIR}/displays/${studentId}.tsv`;
-        const tsvContent = finalRows.map((r) => r.join("\t")).join("\n");
-        await Bun.write(studentOutputFile, tsvContent);
-        console.log(
-          `   * Saved schedule matrix to: ${colors.dim}${studentOutputFile}${colors.reset}`,
-        );
-      }
-
-      if (generateHtml) {
-        // Generate HTML display for easy copy-pasting to Google Sheets
-        const studentHtmlOutputFile = `html/${studentId}.html`;
-        const htmlContent = generateHtmlDisplay(
-          studentId,
-          activeColumns,
-          finalRows,
-        );
-        await Bun.write(studentHtmlOutputFile, htmlContent);
-        console.log(
-          `   * Saved HTML schedule matrix (with Google Sheets styling) to: ${colors.dim}${studentHtmlOutputFile}${colors.reset}`,
-        );
-      }
-    } catch (error) {
-      console.error(
-        `   ${colors.red}An error occurred during display matrix generation:${colors.reset}\n`,
-        error,
-      );
-    }
-  }
-
   // Generate TSVs for every student ID individually
   for (const studentId of peopleIds) {
     console.log(
@@ -909,6 +851,7 @@ async function main() {
     await generateMatrixAndFaculty(
       studentId,
       peopleConfigs[studentId],
+      filteredCourses,
       false,
       true,
     );
@@ -919,11 +862,17 @@ async function main() {
   console.log(
     `${colors.bright}${colors.cyan}--- Generating HTML Schedule Matrices ---${colors.reset}`,
   );
-  for (const [sig, studentIds] of groupedConfigs.entries()) {
+  for (const [, studentIds] of groupedConfigs.entries()) {
     studentIds.sort();
     const studentId = studentIds.join("+");
     const targetConfig = peopleConfigs[studentIds[0]];
-    await generateMatrixAndFaculty(studentId, targetConfig, true, false);
+    await generateMatrixAndFaculty(
+      studentId,
+      targetConfig,
+      filteredCourses,
+      true,
+      false,
+    );
     console.log("");
   }
 

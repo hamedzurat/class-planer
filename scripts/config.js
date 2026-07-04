@@ -6,7 +6,7 @@
  * Tokens: log in at https://ucamcloud.uiu.ac.bd → DevTools → Application →
  *         Local Storage → copy ucam-access-token and ucam-refresh-token.
  *
- * Env overrides (optional): UCAM_ACCESS_TOKEN, UCAM_REFRESH_TOKEN, UCAM_USER_AGENT
+ * Env overrides (set in .env): UCAM_ACCESS_TOKEN, UCAM_REFRESH_TOKEN, UCAM_USER_AGENT
  *
  * See scripts/README.md for usage and scripts/security.md for architecture & security.
  */
@@ -25,6 +25,8 @@ export default {
   user_agent:
     "Mozilla/5.0 (X11; Linux x86_64; rv:152.0) Gecko/20100101 Firefox/152.0",
 
+  // Tokens are loaded from .env (UCAM_ACCESS_TOKEN / UCAM_REFRESH_TOKEN).
+  // Leave these empty — they are only a fallback if env vars are not set.
   auth: {
     access_token: "",
     refresh_token: "",

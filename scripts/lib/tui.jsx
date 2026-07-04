@@ -310,7 +310,7 @@ export function NetworkTui({ traffic, command }) {
             const isHeader = line === "Headers" || line === "Request body";
             return (
               <Text
-                key={`${safeDetailScroll}-${i}`}
+              key={i}
                 wrap="truncate"
                 bold={isSection}
                 dimColor={isHeader}

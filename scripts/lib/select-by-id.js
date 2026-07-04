@@ -123,6 +123,7 @@ function resolvePickTarget(config, opts) {
   let facultyCode = opts.facultyCode?.trim();
   let courseCode = opts.courseCode?.trim();
   let numericId = null;
+  let fromUuid = false;
   /** @type {{ section_name?: string, faculty_code?: string, section_id?: unknown } | null} */
   let sectionHint = null;
 
@@ -139,6 +140,7 @@ function resolvePickTarget(config, opts) {
         );
       }
     } else {
+      fromUuid = true;
       const snap = resolveSnapshotByUuid(config, ref.uuid, courseCode);
       if (!snap) {
         throw new Error(
@@ -180,9 +182,7 @@ function resolvePickTarget(config, opts) {
     courseCode,
     numericId,
     sectionHint,
-    fromUuid: Boolean(
-      opts.sectionRef && parseSectionRef(opts.sectionRef).kind === "uuid",
-    ),
+    fromUuid,
   };
 }
 

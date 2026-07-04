@@ -83,6 +83,7 @@ export class TrafficLogger {
       startedAt: Date.now(),
     };
     this.#entries.push(entry);
+    if (this.#entries.length > 500) this.#entries.shift();
     this.#notify();
     return id;
   }

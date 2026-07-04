@@ -51,23 +51,9 @@ async function runFetch(api, config, traffic) {
   return { files, summary: `${files.length} files` };
 }
 
-async function runSelect(api, config, traffic) {
-  return runSelections(api, config, traffic);
-}
-
 async function runPick(api, config, traffic, pickOpts) {
   const log = (msg) => (traffic ? traffic.log(msg) : console.log(msg));
-  return selectBySectionId(api, config, {
-    formalCode: pickOpts.formalCode,
-    sectionLetter: pickOpts.sectionLetter,
-    sectionRef: pickOpts.sectionRef,
-    courseCode: pickOpts.courseCode,
-    facultyCode: pickOpts.facultyCode,
-    action: pickOpts.action,
-    dryRun: pickOpts.dryRun,
-    localOnly: pickOpts.localOnly,
-    log,
-  });
+  return selectBySectionId(api, config, { ...pickOpts, log });
 }
 
 async function runAll(api, config, traffic) {
@@ -83,7 +69,7 @@ async function executeCommand(cmd, { traffic, config, api, pickOpts }) {
     case "fetch":
       return runFetch(api, config, traffic);
     case "select":
-      return runSelect(api, config, traffic);
+      return runSelections(api, config, traffic);
     case "pick":
       return runPick(api, config, traffic, pickOpts);
     case "all": {
