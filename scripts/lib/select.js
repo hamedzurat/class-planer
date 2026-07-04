@@ -1,7 +1,9 @@
 import { resolveDelayMs, sleep } from "./util.js";
 import {
   buildSelectPayload,
+  fetchCourseSections,
   findEnrolledSection,
+  getCourseDetail,
   indexPreadvByFormal,
   isSelectionOpen,
   normalizeSectionLetters,
@@ -71,14 +73,14 @@ async function selectOne(api, entry, ctx) {
   }
 
   let conf = getConf();
-  let detail = await api.getCourseSections(courseCode);
+  let detail = await getCourseDetail(api, courseCode);
 
   let skip = skipIfAlreadyEnrolled({
     skipIfEnrolled,
     doneCourses,
     formalCode,
     courseCode,
-    sections: detail.data?.sections ?? [],
+    sections: detail.sections,
     log,
   });
   if (skip) return skip;
@@ -86,15 +88,19 @@ async function selectOne(api, entry, ctx) {
   if (!selectOpts.skip_time_check) {
     if (!isSelectionOpen(conf, department, detail.data)) {
       if (!selectOpts.wait_until_open) {
-        return { formalCode, courseCode, ok: false, error: "Selection not open" };
+        return {
+          formalCode,
+          courseCode,
+          ok: false,
+          error: "Selection not open",
+        };
       }
 
       log(`Waiting for ${formalCode}...`);
       conf = await waitUntilOpen(api, department, selectOpts, async (c) => {
-        const d = await api.getCourseSections(courseCode);
-        detail = d;
+        detail = await getCourseDetail(api, courseCode);
         ctx.setConf(c);
-        return isSelectionOpen(c, department, d.data);
+        return isSelectionOpen(c, department, detail.data);
       });
 
       if (!conf || !isSelectionOpen(conf, department, detail.data)) {
@@ -110,17 +116,28 @@ async function selectOne(api, entry, ctx) {
     log(`Skip time check for ${formalCode}`);
   }
 
+  try {
+    detail = await fetchCourseSections(api, courseCode);
+  } catch (err) {
+    return {
+      formalCode,
+      courseCode,
+      ok: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
+  }
+
   skip = skipIfAlreadyEnrolled({
     skipIfEnrolled,
     doneCourses,
     formalCode,
     courseCode,
-    sections: detail.data?.sections ?? [],
+    sections: detail.sections,
     log,
   });
   if (skip) return skip;
 
-  const sections = detail.data?.sections ?? [];
+  const sections = detail.sections;
   const picked = pickSection(sections, letters);
   if (!picked) {
     return {
@@ -177,7 +194,8 @@ export async function runSelections(api, config, traffic = null) {
 
   if (!eligRes.data?.eligible) {
     throw new Error(
-      eligRes.data?.special_note || "Account not eligible for section selection",
+      eligRes.data?.special_note ||
+        "Account not eligible for section selection",
     );
   }
 

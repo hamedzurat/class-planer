@@ -163,8 +163,7 @@ export function formatPlainEntry(entry) {
       : entry.error
         ? "ERR"
         : String(entry.status ?? "?");
-  const ms =
-    entry.durationMs !== null ? ` ${entry.durationMs}ms` : "";
+  const ms = entry.durationMs !== null ? ` ${entry.durationMs}ms` : "";
   const path = entry.path.padEnd(42);
   return `${entry.method.padEnd(4)} ${path} ${status}${ms}`;
 }

@@ -4,7 +4,7 @@ Fetch section data and run section selection against [UCAM Cloud](https://ucamcl
 
 ## Setup
 
-1. Install [Bun](https://bun.sh).
+1. Install [Bun](https://bun.sh) and [just](https://github.com/casey/just).
 2. Edit **`scripts/config.js`**:
    - Paste `access_token` and `refresh_token` from browser localStorage (`ucam-access-token`, `ucam-refresh-token`).
    - Set `user_agent` to your browser’s UA (DevTools → Network → any request → `user-agent` header).
@@ -14,18 +14,49 @@ Fetch section data and run section selection against [UCAM Cloud](https://ucamcl
 ## Commands
 
 ```bash
-bun scripts/cli.js fetch    # download res.json + tmp/*.json
-bun scripts/cli.js select   # select sections per config
-bun scripts/cli.js all      # fetch then select
-bun scripts/cli.js help
+just ucam-fetch    # download res.json + tmp/*.json
+just ucam-select   # select sections per config
+just ucam-pick     # pick one section (UUID or no-space shorthand)
+just ucam-pick-section  # pick by formal code + letter (handles spaces)
+just ucam-all      # fetch then select
+just ucam-help     # show help + pick usage
 ```
 
-Via just:
+List all recipes: `just help`
+
+## Pick one section
+
+**Default is dry-run only** — resolves `course_code` from local `tmp/preadv.json` or `res.json`, prints the POST payload, sends nothing.
+
+Use **formal code + section letter** (same as `select` config). List UUIDs from `res.json` are accepted as a shortcut: the CLI looks them up locally and converts to formal code + section — UUIDs are **never** sent in the POST body.
+
+On `--send` or `--fetch`, the script calls **`GET /courses/sections/{course}`** (same as the browser), matches by section letter/faculty, and uses the **numeric** `section_id` in the POST.
 
 ```bash
-just ucam-fetch
-just ucam-select
+# Preview (no HTTP) — recommended
+just ucam-pick-section "CSE 4326" H
+just ucam-pick --formal-code "CSE 4326" --section H
+
+# From a list UUID in res.json (auto → formal_code + section)
+just ucam-pick c7daa899-42e9-4084-b565-baa85086c052
+just ucam-pick <list-uuid>
+
+# Resolve live numeric id without POST
+just ucam-pick-section "CSE 4326" H --fetch
+
+# Actually POST to UCAM
+just ucam-pick-section "CSE 4326" H --send
+just ucam-pick <list-uuid> --send
+
+# Disambiguate when multiple sections share a letter
+just ucam-pick-section "CSE 4326" H --faculty ABC123
 ```
+
+Note: `just` splits arguments on spaces, so use `ucam-pick-section` or separate `--formal-code` / `--section` flags rather than a single `"CSE 4326:H"` argument.
+
+`--course` is optional when the formal code exists in `preadv.json` or `res.json`. Pass it to override the resolved course code.
+
+For bulk selection, use **`just ucam-select`** — same formal_code + section letters, with wait/retry options from config.
 
 ## Network TUI
 
@@ -40,8 +71,8 @@ Uses the terminal alternate screen (full viewport). Disable with `--no-tui`.
 Plain text mode (pipes, CI, or `--no-tui` / `NO_TUI=1`):
 
 ```bash
-bun scripts/cli.js fetch --no-tui
-NO_TUI=1 bun scripts/cli.js select
+just ucam-fetch --no-tui
+NO_TUI=1 just ucam-select
 ```
 
 Tokens in headers and bodies are redacted in the log.
@@ -120,14 +151,14 @@ select: {
 | `tmp/preadv.json`   | Pre-advised courses                   |
 | `tmp/1306.json`, …  | Per-course section detail             |
 
-Then run the class planner: `bun run main.js` or `just`.
+Then run the class planner: `just` (default recipe).
 
 ## Typical workflow
 
-1. `fetch` before selection opens — inspect `res.json` / `tmp/*`.
-2. Set `select.dry_run: true`, run `select` — verify matching.
+1. `just ucam-fetch` before selection opens — inspect `res.json` / `tmp/*`.
+2. Set `select.dry_run: true`, run `just ucam-select` — verify matching.
 3. Set `select.wait_until_open: true` if running before the window.
-4. Set `dry_run: false`, run `select` when ready.
+4. Set `dry_run: false`, run `just ucam-select` when ready.
 5. Optionally `select.register_after: true` for final registration.
 
 ## Security notes
