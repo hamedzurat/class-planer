@@ -8,8 +8,500 @@
     "running_session": "summer26",
     "have_mapped_sections": false,
     "mapped_section_ids": [],
-    "sections": [],
-    "selection_open": false,
+    "sections": [
+      {
+        "section_id": 45598,
+        "section_name": "A",
+        "faculty_name": "Md. Shafqat Talukder",
+        "faculty_code": "MSTR",
+        "faculty_email": "shafqat@cse.uiu.ac.bd",
+        "room_details": "501 - Circuit Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "08:30",
+            "end_time": "11:00"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45599,
+        "section_name": "B",
+        "faculty_name": "Arnab Bhattacharjee",
+        "faculty_code": "ArBh",
+        "faculty_email": "arnab@cse.uiu.ac.bd",
+        "room_details": "825 - Digital Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "11:11",
+            "end_time": "13:40"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45600,
+        "section_name": "C",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "825 - Digital Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "08:30",
+            "end_time": "11:00"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45601,
+        "section_name": "D",
+        "faculty_name": "Rafid Nahiyan Farabi",
+        "faculty_code": "RNF",
+        "faculty_email": "rafid@cse.uiu.ac.bd",
+        "room_details": "825 - Digital Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "11:11",
+            "end_time": "13:40"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false,
+        "conflicts": [
+          {
+            "conflicting_course_code": "1306-1-1",
+            "conflicting_formal_code": "CSE 4325",
+            "conflicting_section_name": "H",
+            "day": "Sunday",
+            "overlap_start": "12:31",
+            "overlap_end": "13:40"
+          },
+          {
+            "conflicting_course_code": "1321-1-1",
+            "conflicting_formal_code": "CSE 4509",
+            "conflicting_section_name": "F",
+            "day": "Sunday",
+            "overlap_start": "11:11",
+            "overlap_end": "12:30"
+          }
+        ],
+        "conflict_message": "conflicts with CSE 4325 (H) on Sunday from 12:31 to 13:40; CSE 4509 (F) on Sunday from 11:11 to 12:30."
+      },
+      {
+        "section_id": 45602,
+        "section_name": "E",
+        "faculty_name": "Md. Abid Hossain",
+        "faculty_code": "AbHn",
+        "faculty_email": "abid@cse.uiu.ac.bd",
+        "room_details": "505 - Circuit Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "14:00",
+            "end_time": "16:30"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 22,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 22
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false,
+        "conflicts": [
+          {
+            "conflicting_course_code": "1356-1-1",
+            "conflicting_formal_code": "CSE 4327",
+            "conflicting_section_name": "A",
+            "day": "Sunday",
+            "overlap_start": "14:00",
+            "overlap_end": "15:10"
+          }
+        ],
+        "conflict_message": "conflicts with CSE 4327 (A) on Sunday from 14:00 to 15:10."
+      },
+      {
+        "section_id": 45603,
+        "section_name": "F",
+        "faculty_name": "Arnab Bhattacharjee",
+        "faculty_code": "ArBh",
+        "faculty_email": "arnab@cse.uiu.ac.bd",
+        "room_details": "501 - Circuit Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Tuesday",
+            "start_time": "08:30",
+            "end_time": "11:00"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": true
+      },
+      {
+        "section_id": 45607,
+        "section_name": "G",
+        "faculty_name": "Md. Mehedi Hasan",
+        "faculty_code": "MdMeHn",
+        "faculty_email": "",
+        "room_details": "825 - Digital Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Tuesday",
+            "start_time": "11:11",
+            "end_time": "13:40"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 34,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 34
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45608,
+        "section_name": "H",
+        "faculty_name": "Md. Shafqat Talukder",
+        "faculty_code": "MSTR",
+        "faculty_email": "shafqat@cse.uiu.ac.bd",
+        "room_details": "501 - Circuit Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Tuesday",
+            "start_time": "14:00",
+            "end_time": "16:30"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45609,
+        "section_name": "I",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "501 - Circuit Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Wednesday",
+            "start_time": "08:30",
+            "end_time": "11:00"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 12,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 12
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45610,
+        "section_name": "J",
+        "faculty_name": "Rafid Nahiyan Farabi",
+        "faculty_code": "RNF",
+        "faculty_email": "rafid@cse.uiu.ac.bd",
+        "room_details": "511 - Digital Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Wednesday",
+            "start_time": "11:11",
+            "end_time": "13:40"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false,
+        "conflicts": [
+          {
+            "conflicting_course_code": "1306-1-1",
+            "conflicting_formal_code": "CSE 4325",
+            "conflicting_section_name": "H",
+            "day": "Wednesday",
+            "overlap_start": "12:31",
+            "overlap_end": "13:40"
+          },
+          {
+            "conflicting_course_code": "1321-1-1",
+            "conflicting_formal_code": "CSE 4509",
+            "conflicting_section_name": "F",
+            "day": "Wednesday",
+            "overlap_start": "11:11",
+            "overlap_end": "12:30"
+          }
+        ],
+        "conflict_message": "conflicts with CSE 4325 (H) on Wednesday from 12:31 to 13:40; CSE 4509 (F) on Wednesday from 11:11 to 12:30."
+      },
+      {
+        "section_id": 45611,
+        "section_name": "K",
+        "faculty_name": "Md. Mehedi Hasan",
+        "faculty_code": "MdMeHn",
+        "faculty_email": "",
+        "room_details": "825 - Digital Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Wednesday",
+            "start_time": "14:00",
+            "end_time": "16:30"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 20,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 20
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false,
+        "conflicts": [
+          {
+            "conflicting_course_code": "1356-1-1",
+            "conflicting_formal_code": "CSE 4327",
+            "conflicting_section_name": "A",
+            "day": "Wednesday",
+            "overlap_start": "14:00",
+            "overlap_end": "15:10"
+          }
+        ],
+        "conflict_message": "conflicts with CSE 4327 (A) on Wednesday from 14:00 to 15:10."
+      },
+      {
+        "section_id": 45612,
+        "section_name": "L",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "825 - Digital Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Wednesday",
+            "start_time": "08:30",
+            "end_time": "11:00"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 1,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 1
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45613,
+        "section_name": "M",
+        "faculty_name": "Miftahul Sheikh",
+        "faculty_code": "MfSh",
+        "faculty_email": "miftahulsheikh1100@gmail.com",
+        "room_details": "504 - Circuit Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Monday",
+            "start_time": "11:11",
+            "end_time": "13:40"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45614,
+        "section_name": "N",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "511 - Digital Lab",
+        "formal_code": "CSE 4326",
+        "schedule": [
+          {
+            "day": "Wednesday",
+            "start_time": "14:00",
+            "end_time": "16:30"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 4,
+        "course_code": "1307-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 4
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false,
+        "conflicts": [
+          {
+            "conflicting_course_code": "1356-1-1",
+            "conflicting_formal_code": "CSE 4327",
+            "conflicting_section_name": "A",
+            "day": "Wednesday",
+            "overlap_start": "14:00",
+            "overlap_end": "15:10"
+          }
+        ],
+        "conflict_message": "conflicts with CSE 4327 (A) on Wednesday from 14:00 to 15:10."
+      }
+    ],
+    "selection_open": true,
     "section_selection_start_time": "2026-07-04T07:00:00Z",
     "section_selection_end_time": "2026-07-06T17:59:00Z",
     "is_priority_student": false,

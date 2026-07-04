@@ -8,8 +8,320 @@
     "running_session": "summer26",
     "have_mapped_sections": false,
     "mapped_section_ids": [],
-    "sections": [],
-    "selection_open": false,
+    "sections": [
+      {
+        "section_id": 45623,
+        "section_name": "A",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "727 - Computer Lab",
+        "formal_code": "CSE 4510",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "14:00",
+            "end_time": "16:30"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 21,
+        "course_code": "1322-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 21
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45624,
+        "section_name": "B",
+        "faculty_name": "Nahin F. Siddiqui",
+        "faculty_code": "NaFS",
+        "faculty_email": "nahin@cse.uiu.ac.bd",
+        "room_details": "727 - Computer Lab",
+        "formal_code": "CSE 4510",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "08:30",
+            "end_time": "11:00"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1322-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45625,
+        "section_name": "C",
+        "faculty_name": "Shahil Yasar Haque",
+        "faculty_code": "SYH",
+        "faculty_email": "shahilyasarhaque@gmail.com",
+        "room_details": "827 - Computer Lab",
+        "formal_code": "CSE 4510",
+        "schedule": [
+          {
+            "day": "Monday",
+            "start_time": "14:00",
+            "end_time": "16:30"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 19,
+        "course_code": "1322-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 19
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45626,
+        "section_name": "D",
+        "faculty_name": "Md. Enamul Haque",
+        "faculty_code": "MEHq",
+        "faculty_email": "mhaque182055@bscse.uiu.ac.bd",
+        "room_details": "727 - Computer Lab",
+        "formal_code": "CSE 4510",
+        "schedule": [
+          {
+            "day": "Monday",
+            "start_time": "08:30",
+            "end_time": "11:00"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1322-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": true
+      },
+      {
+        "section_id": 45627,
+        "section_name": "E",
+        "faculty_name": "Fairoz Anika",
+        "faculty_code": "FzAn",
+        "faculty_email": "fairoz@cse.uiu.ac.bd",
+        "room_details": "530 - Computer Lab",
+        "formal_code": "CSE 4510",
+        "schedule": [
+          {
+            "day": "Tuesday",
+            "start_time": "11:11",
+            "end_time": "13:40"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 12,
+        "course_code": "1322-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 12
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45628,
+        "section_name": "F",
+        "faculty_name": "Md. Enamul Haque",
+        "faculty_code": "MEHq",
+        "faculty_email": "mhaque182055@bscse.uiu.ac.bd",
+        "room_details": "530 - Computer Lab",
+        "formal_code": "CSE 4510",
+        "schedule": [
+          {
+            "day": "Monday",
+            "start_time": "14:00",
+            "end_time": "16:30"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 31,
+        "course_code": "1322-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 31
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45629,
+        "section_name": "G",
+        "faculty_name": "Shahil Yasar Haque",
+        "faculty_code": "SYH",
+        "faculty_email": "shahilyasarhaque@gmail.com",
+        "room_details": "530 - Computer Lab",
+        "formal_code": "CSE 4510",
+        "schedule": [
+          {
+            "day": "Monday",
+            "start_time": "11:11",
+            "end_time": "13:40"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1322-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45630,
+        "section_name": "H",
+        "faculty_name": "Abu Bakar Fahad",
+        "faculty_code": "ABF",
+        "faculty_email": "abfahad.cse@gmail.com",
+        "room_details": "826 - Computer Lab",
+        "formal_code": "CSE 4510",
+        "schedule": [
+          {
+            "day": "Monday",
+            "start_time": "11:11",
+            "end_time": "13:40"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1322-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45631,
+        "section_name": "I",
+        "faculty_name": "Nahin F. Siddiqui",
+        "faculty_code": "NaFS",
+        "faculty_email": "nahin@cse.uiu.ac.bd",
+        "room_details": "927 - Computer Lab",
+        "formal_code": "CSE 4510",
+        "schedule": [
+          {
+            "day": "Wednesday",
+            "start_time": "14:00",
+            "end_time": "16:30"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 35,
+        "course_code": "1322-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 35
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false,
+        "conflicts": [
+          {
+            "conflicting_course_code": "1356-1-1",
+            "conflicting_formal_code": "CSE 4327",
+            "conflicting_section_name": "A",
+            "day": "Wednesday",
+            "overlap_start": "14:00",
+            "overlap_end": "15:10"
+          }
+        ],
+        "conflict_message": "conflicts with CSE 4327 (A) on Wednesday from 14:00 to 15:10."
+      },
+      {
+        "section_id": 45632,
+        "section_name": "J",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "627 - Computer Lab",
+        "formal_code": "CSE 4510",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "08:30",
+            "end_time": "11:00"
+          }
+        ],
+        "credits": 1,
+        "total_seats": 35,
+        "seats_taken": 20,
+        "course_code": "1322-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 35,
+            "seatsTaken": 20
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      }
+    ],
+    "selection_open": true,
     "section_selection_start_time": "2026-07-04T07:00:00Z",
     "section_selection_end_time": "2026-07-06T17:59:00Z",
     "is_priority_student": false,

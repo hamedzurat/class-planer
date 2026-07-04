@@ -68,10 +68,10 @@ export default {
 
   // formal_code + section letter(s). First available letter in each list wins.
   selections: [
-    { formal_code: "CSE 4326", sections: ["H", "F"] },
+    { formal_code: "CSE 4326", sections: ["F", "H", "G"] },
     { formal_code: "CSE 4509", sections: ["F", "H"] },
     { formal_code: "CSE 4325", sections: ["H", "B", "D", "F"] },
-    { formal_code: "CSE 4510", sections: ["F", "D", "G", "C"] },
+    { formal_code: "CSE 4510", sections: ["D", "F", "G", "C"] },
     { formal_code: "CSE 4327", sections: ["A"] },
   ],
 };

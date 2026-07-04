@@ -8,8 +8,44 @@
     "running_session": "summer26",
     "have_mapped_sections": false,
     "mapped_section_ids": [],
-    "sections": [],
-    "selection_open": false,
+    "sections": [
+      {
+        "section_id": 45751,
+        "section_name": "A",
+        "faculty_name": "M. Fahmin Rahman",
+        "faculty_code": "MFRn",
+        "faculty_email": "fahmin@cse.uiu.ac.bd",
+        "room_details": "403",
+        "formal_code": "CSE 4327",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "13:51",
+            "end_time": "15:10"
+          },
+          {
+            "day": "Wednesday",
+            "start_time": "13:51",
+            "end_time": "15:10"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 24,
+        "course_code": "1356-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 24
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": true
+      }
+    ],
+    "selection_open": true,
     "section_selection_start_time": "2026-07-04T07:00:00Z",
     "section_selection_end_time": "2026-07-06T17:59:00Z",
     "is_priority_student": false,

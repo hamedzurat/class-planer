@@ -413,16 +413,21 @@ async function generateMatrixAndFaculty(
         for (const section of course.sections) {
           const facultyName = section.faculty_name || "";
           const facultyCode = section.faculty_code || "";
-          if (facultyName && facultyCode && facultyName !== "TBA" && facultyCode !== "TBA") {
+          if (
+            facultyName &&
+            facultyCode &&
+            facultyName !== "TBA" &&
+            facultyCode !== "TBA"
+          ) {
             studentUniqueFaculties.set(facultyCode, facultyName);
           }
         }
       }
 
       const studentFacultyRows = ["Faculty Name\tFaculty Code"];
-      const sortedStudentFaculties = Array.from(studentUniqueFaculties.entries()).sort(
-        (a, b) => a[0].localeCompare(b[0]),
-      );
+      const sortedStudentFaculties = Array.from(
+        studentUniqueFaculties.entries(),
+      ).sort((a, b) => a[0].localeCompare(b[0]));
       for (const [code, name] of sortedStudentFaculties) {
         studentFacultyRows.push(`${name}\t${code}`);
       }
@@ -446,7 +451,8 @@ async function generateMatrixAndFaculty(
     const labCourses = [];
 
     for (const c of studentCourses) {
-      const short = targetConfig[c.formal_code] || generateShortName(c.course_name);
+      const short =
+        targetConfig[c.formal_code] || generateShortName(c.course_name);
       if (short.toLowerCase().endsWith("-lab")) {
         labCourses.push({ code: c.course_code, short });
       } else {
@@ -462,11 +468,23 @@ async function generateMatrixAndFaculty(
     for (let gIdx = 0; gIdx < DAY_GROUPS.length; gIdx++) {
       const group = DAY_GROUPS[gIdx];
       if (group.type === "none") {
-        columns.push({ type: "none", groupIndex: gIdx, groupName: group.name, courseShort: "xxx" });
+        columns.push({
+          type: "none",
+          groupIndex: gIdx,
+          groupName: group.name,
+          courseShort: "xxx",
+        });
       } else {
-        const coursesInGroup = group.type === "theory" ? theoryCourses : labCourses;
+        const coursesInGroup =
+          group.type === "theory" ? theoryCourses : labCourses;
         for (const c of coursesInGroup) {
-          columns.push({ type: group.type, groupIndex: gIdx, groupName: group.name, courseCode: c.code, courseShort: c.short });
+          columns.push({
+            type: group.type,
+            groupIndex: gIdx,
+            groupName: group.name,
+            courseCode: c.code,
+            courseShort: c.short,
+          });
         }
       }
     }
@@ -477,13 +495,19 @@ async function generateMatrixAndFaculty(
       const colMatches = columns.map((col) => {
         if (col.type === "time") return [time];
         if (col.type === "none") return ["x"];
-        const c = studentCourses.find((cc) => cc.course_code === col.courseCode);
+        const c = studentCourses.find(
+          (cc) => cc.course_code === col.courseCode,
+        );
         const matches = [];
         if (c) {
           const group = DAY_GROUPS[col.groupIndex];
           for (const section of c.sections) {
             if (isSectionStartingInSlot(section, time, group.days)) {
-              matches.push(section.faculty_code ? `${section.faculty_code}-${section.section_name}` : section.section_name);
+              matches.push(
+                section.faculty_code
+                  ? `${section.faculty_code}-${section.section_name}`
+                  : section.section_name,
+              );
             }
           }
         }
@@ -492,7 +516,8 @@ async function generateMatrixAndFaculty(
 
       let maxMatches = 0;
       for (let i = 1; i < columns.length; i++) {
-        if (columns[i].type !== "none" && colMatches[i].length > maxMatches) maxMatches = colMatches[i].length;
+        if (columns[i].type !== "none" && colMatches[i].length > maxMatches)
+          maxMatches = colMatches[i].length;
       }
 
       for (let rowIdx = 0; rowIdx < maxMatches; rowIdx++) {
@@ -510,7 +535,9 @@ async function generateMatrixAndFaculty(
     for (let colIdx = 1; colIdx < columns.length; colIdx++) {
       if (columns[colIdx].type === "none") {
         activeColumnIndices.push(colIdx);
-      } else if (allSlotRows.some((row) => row[colIdx] !== "" && row[colIdx] !== "x")) {
+      } else if (
+        allSlotRows.some((row) => row[colIdx] !== "" && row[colIdx] !== "x")
+      ) {
         activeColumnIndices.push(colIdx);
       }
     }
@@ -530,7 +557,8 @@ async function generateMatrixAndFaculty(
 
     // Header row 2: course short names
     const headerRow2 = [""];
-    for (let i = 1; i < activeColumns.length; i++) headerRow2.push(activeColumns[i].courseShort);
+    for (let i = 1; i < activeColumns.length; i++)
+      headerRow2.push(activeColumns[i].courseShort);
     finalRows.push(headerRow2);
 
     // Data rows
@@ -543,14 +571,24 @@ async function generateMatrixAndFaculty(
 
     if (generateTsv) {
       const studentOutputFile = `${OUTPUT_DIR}/displays/${studentId}.tsv`;
-      await Bun.write(studentOutputFile, finalRows.map((r) => r.join("\t")).join("\n"));
-      console.log(`   * Saved schedule matrix to: ${colors.dim}${studentOutputFile}${colors.reset}`);
+      await Bun.write(
+        studentOutputFile,
+        finalRows.map((r) => r.join("\t")).join("\n"),
+      );
+      console.log(
+        `   * Saved schedule matrix to: ${colors.dim}${studentOutputFile}${colors.reset}`,
+      );
     }
 
     if (generateHtml) {
       const studentHtmlOutputFile = `html/${studentId}.html`;
-      await Bun.write(studentHtmlOutputFile, generateHtmlDisplay(studentId, activeColumns, finalRows));
-      console.log(`   * Saved HTML schedule matrix (with Google Sheets styling) to: ${colors.dim}${studentHtmlOutputFile}${colors.reset}`);
+      await Bun.write(
+        studentHtmlOutputFile,
+        generateHtmlDisplay(studentId, activeColumns, finalRows),
+      );
+      console.log(
+        `   * Saved HTML schedule matrix (with Google Sheets styling) to: ${colors.dim}${studentHtmlOutputFile}${colors.reset}`,
+      );
     }
   } catch (error) {
     console.error(

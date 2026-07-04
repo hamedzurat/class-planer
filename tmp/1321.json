@@ -8,8 +8,319 @@
     "running_session": "summer26",
     "have_mapped_sections": false,
     "mapped_section_ids": [],
-    "sections": [],
-    "selection_open": false,
+    "sections": [
+      {
+        "section_id": 45615,
+        "section_name": "A",
+        "faculty_name": "Nahin F. Siddiqui",
+        "faculty_code": "NaFS",
+        "faculty_email": "nahin@cse.uiu.ac.bd",
+        "room_details": "410",
+        "formal_code": "CSE 4509",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "08:30",
+            "end_time": "09:50"
+          },
+          {
+            "day": "Tuesday",
+            "start_time": "08:30",
+            "end_time": "09:50"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 30,
+        "course_code": "1321-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 30
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false,
+        "conflicts": [
+          {
+            "conflicting_course_code": "1307-1-1",
+            "conflicting_formal_code": "CSE 4326",
+            "conflicting_section_name": "F",
+            "day": "Tuesday",
+            "overlap_start": "08:30",
+            "overlap_end": "09:50"
+          }
+        ],
+        "conflict_message": "conflicts with CSE 4326 (F) on Tuesday from 08:30 to 09:50."
+      },
+      {
+        "section_id": 45616,
+        "section_name": "B",
+        "faculty_name": "Nahin F. Siddiqui",
+        "faculty_code": "NaFS",
+        "faculty_email": "nahin@cse.uiu.ac.bd",
+        "room_details": "404",
+        "formal_code": "CSE 4509",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "12:31",
+            "end_time": "13:50"
+          },
+          {
+            "day": "Tuesday",
+            "start_time": "12:31",
+            "end_time": "13:50"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 45,
+        "course_code": "1321-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 45
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45617,
+        "section_name": "C",
+        "faculty_name": "Md. Siam",
+        "faculty_code": "MdSam",
+        "faculty_email": "siam@cse.uiu.ac.bd",
+        "room_details": "404",
+        "formal_code": "CSE 4509",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "13:51",
+            "end_time": "15:10"
+          },
+          {
+            "day": "Tuesday",
+            "start_time": "13:51",
+            "end_time": "15:10"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 45,
+        "course_code": "1321-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 45
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45618,
+        "section_name": "D",
+        "faculty_name": "Md. Sajjad Hossain",
+        "faculty_code": "MSdHn",
+        "faculty_email": "sajjad@cse.uiu.ac.bd",
+        "room_details": "401",
+        "formal_code": "CSE 4509",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "15:11",
+            "end_time": "16:30"
+          },
+          {
+            "day": "Tuesday",
+            "start_time": "15:11",
+            "end_time": "16:30"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 45,
+        "course_code": "1321-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 45
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45619,
+        "section_name": "E",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "407",
+        "formal_code": "CSE 4509",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "08:30",
+            "end_time": "09:50"
+          },
+          {
+            "day": "Wednesday",
+            "start_time": "08:30",
+            "end_time": "09:50"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 2,
+        "course_code": "1321-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 2
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45620,
+        "section_name": "F",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "407",
+        "formal_code": "CSE 4509",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "11:11",
+            "end_time": "12:30"
+          },
+          {
+            "day": "Wednesday",
+            "start_time": "11:11",
+            "end_time": "12:30"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 20,
+        "course_code": "1321-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 20
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": true
+      },
+      {
+        "section_id": 45621,
+        "section_name": "G",
+        "faculty_name": "Md. Siam",
+        "faculty_code": "MdSam",
+        "faculty_email": "siam@cse.uiu.ac.bd",
+        "room_details": "405",
+        "formal_code": "CSE 4509",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "13:51",
+            "end_time": "15:10"
+          },
+          {
+            "day": "Wednesday",
+            "start_time": "13:51",
+            "end_time": "15:10"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 45,
+        "course_code": "1321-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 45
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false,
+        "conflicts": [
+          {
+            "conflicting_course_code": "1356-1-1",
+            "conflicting_formal_code": "CSE 4327",
+            "conflicting_section_name": "A",
+            "day": "Sunday",
+            "overlap_start": "13:51",
+            "overlap_end": "15:10"
+          },
+          {
+            "conflicting_course_code": "1356-1-1",
+            "conflicting_formal_code": "CSE 4327",
+            "conflicting_section_name": "A",
+            "day": "Wednesday",
+            "overlap_start": "13:51",
+            "overlap_end": "15:10"
+          }
+        ],
+        "conflict_message": "conflicts with CSE 4327 (A) on Sunday and Wednesday from 13:51 to 15:10."
+      },
+      {
+        "section_id": 45622,
+        "section_name": "H",
+        "faculty_name": "Md. Sajjad Hossain",
+        "faculty_code": "MSdHn",
+        "faculty_email": "sajjad@cse.uiu.ac.bd",
+        "room_details": "409",
+        "formal_code": "CSE 4509",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "15:11",
+            "end_time": "16:30"
+          },
+          {
+            "day": "Wednesday",
+            "start_time": "15:11",
+            "end_time": "16:30"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 42,
+        "course_code": "1321-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 42
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      }
+    ],
+    "selection_open": true,
     "section_selection_start_time": "2026-07-04T07:00:00Z",
     "section_selection_end_time": "2026-07-06T17:59:00Z",
     "is_priority_student": false,

@@ -8,8 +8,389 @@
     "running_session": "summer26",
     "have_mapped_sections": false,
     "mapped_section_ids": [],
-    "sections": [],
-    "selection_open": false,
+    "sections": [
+      {
+        "section_id": 45587,
+        "section_name": "A",
+        "faculty_name": "Md. Shafqat Talukder",
+        "faculty_code": "MSTR",
+        "faculty_email": "shafqat@cse.uiu.ac.bd",
+        "room_details": "410",
+        "formal_code": "CSE 4325",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "11:11",
+            "end_time": "12:30"
+          },
+          {
+            "day": "Tuesday",
+            "start_time": "11:11",
+            "end_time": "12:30"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 45,
+        "course_code": "1306-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 45
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45588,
+        "section_name": "B",
+        "faculty_name": "Md. Shafqat Talukder",
+        "faculty_code": "MSTR",
+        "faculty_email": "shafqat@cse.uiu.ac.bd",
+        "room_details": "406",
+        "formal_code": "CSE 4325",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "15:11",
+            "end_time": "16:30"
+          },
+          {
+            "day": "Wednesday",
+            "start_time": "15:11",
+            "end_time": "16:30"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 45,
+        "course_code": "1306-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 45
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45589,
+        "section_name": "C",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "403",
+        "formal_code": "CSE 4325",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "12:31",
+            "end_time": "13:50"
+          },
+          {
+            "day": "Tuesday",
+            "start_time": "12:31",
+            "end_time": "13:50"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 45,
+        "course_code": "1306-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 45
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45590,
+        "section_name": "D",
+        "faculty_name": "Md. Shafqat Talukder",
+        "faculty_code": "MSTR",
+        "faculty_email": "shafqat@cse.uiu.ac.bd",
+        "room_details": "405",
+        "formal_code": "CSE 4325",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "09:51",
+            "end_time": "11:10"
+          },
+          {
+            "day": "Wednesday",
+            "start_time": "09:51",
+            "end_time": "11:10"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 45,
+        "course_code": "1306-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 45
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45591,
+        "section_name": "E",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "330",
+        "formal_code": "CSE 4325",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "13:51",
+            "end_time": "15:10"
+          },
+          {
+            "day": "Tuesday",
+            "start_time": "13:51",
+            "end_time": "15:10"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 25,
+        "course_code": "1306-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 25
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45592,
+        "section_name": "F",
+        "faculty_name": "Arnab Bhattacharjee",
+        "faculty_code": "ArBh",
+        "faculty_email": "arnab@cse.uiu.ac.bd",
+        "room_details": "405",
+        "formal_code": "CSE 4325",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "11:11",
+            "end_time": "12:30"
+          },
+          {
+            "day": "Wednesday",
+            "start_time": "11:11",
+            "end_time": "12:30"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 45,
+        "course_code": "1306-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 45
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false,
+        "conflicts": [
+          {
+            "conflicting_course_code": "1321-1-1",
+            "conflicting_formal_code": "CSE 4509",
+            "conflicting_section_name": "F",
+            "day": "Sunday",
+            "overlap_start": "11:11",
+            "overlap_end": "12:30"
+          },
+          {
+            "conflicting_course_code": "1321-1-1",
+            "conflicting_formal_code": "CSE 4509",
+            "conflicting_section_name": "F",
+            "day": "Wednesday",
+            "overlap_start": "11:11",
+            "overlap_end": "12:30"
+          }
+        ],
+        "conflict_message": "conflicts with CSE 4509 (F) on Sunday and Wednesday from 11:11 to 12:30."
+      },
+      {
+        "section_id": 45594,
+        "section_name": "H",
+        "faculty_name": "Arnab Bhattacharjee",
+        "faculty_code": "ArBh",
+        "faculty_email": "arnab@cse.uiu.ac.bd",
+        "room_details": "405",
+        "formal_code": "CSE 4325",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "12:31",
+            "end_time": "13:50"
+          },
+          {
+            "day": "Wednesday",
+            "start_time": "12:31",
+            "end_time": "13:50"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 45,
+        "course_code": "1306-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 45
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": true
+      },
+      {
+        "section_id": 45595,
+        "section_name": "I",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "404",
+        "formal_code": "CSE 4325",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "08:30",
+            "end_time": "09:50"
+          },
+          {
+            "day": "Wednesday",
+            "start_time": "08:30",
+            "end_time": "09:50"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 18,
+        "course_code": "1306-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 18
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      },
+      {
+        "section_id": 45596,
+        "section_name": "J",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "805",
+        "formal_code": "CSE 4325",
+        "schedule": [
+          {
+            "day": "Saturday",
+            "start_time": "09:51",
+            "end_time": "11:10"
+          },
+          {
+            "day": "Tuesday",
+            "start_time": "09:51",
+            "end_time": "11:10"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 45,
+        "course_code": "1306-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 45
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false,
+        "conflicts": [
+          {
+            "conflicting_course_code": "1307-1-1",
+            "conflicting_formal_code": "CSE 4326",
+            "conflicting_section_name": "F",
+            "day": "Tuesday",
+            "overlap_start": "09:51",
+            "overlap_end": "11:00"
+          }
+        ],
+        "conflict_message": "conflicts with CSE 4326 (F) on Tuesday from 09:51 to 11:00."
+      },
+      {
+        "section_id": 45597,
+        "section_name": "K",
+        "faculty_name": "",
+        "faculty_code": "",
+        "faculty_email": "",
+        "room_details": "405",
+        "formal_code": "CSE 4325",
+        "schedule": [
+          {
+            "day": "Sunday",
+            "start_time": "08:30",
+            "end_time": "09:50"
+          },
+          {
+            "day": "Wednesday",
+            "start_time": "08:30",
+            "end_time": "09:50"
+          }
+        ],
+        "credits": 3,
+        "total_seats": 45,
+        "seats_taken": 4,
+        "course_code": "1306-1-1",
+        "department_code": "011",
+        "seat_info": {
+          "011": {
+            "totalSeats": 45,
+            "seatsTaken": 4
+          }
+        },
+        "stop_option_to_change_section": false,
+        "isMapped": false,
+        "is_enrolled": false
+      }
+    ],
+    "selection_open": true,
     "section_selection_start_time": "2026-07-04T07:00:00Z",
     "section_selection_end_time": "2026-07-06T17:59:00Z",
     "is_priority_student": false,
