@@ -1,0 +1,123 @@
+{
+  "status": "success",
+  "data": {
+    "can_authenticate": false,
+    "section_selection_status": "open",
+    "section_selection": {
+      "111": {
+        "is_open": true,
+        "start_time": "2026-07-04T04:00:00Z",
+        "end_time": "2026-07-06T17:59:00Z",
+        "current_session": "summer26",
+        "cloud_registration_open": true,
+        "priority_enabled": false,
+        "priority_credit_threshold": 0,
+        "priority_early_access_seconds": 0
+      },
+      "114": {
+        "is_open": true,
+        "start_time": "2026-07-04T04:00:00Z",
+        "end_time": "2026-07-06T17:59:00Z",
+        "current_session": "summer26",
+        "cloud_registration_open": true,
+        "priority_enabled": false,
+        "priority_credit_threshold": 0,
+        "priority_early_access_seconds": 0
+      },
+      "121": {
+        "is_open": true,
+        "start_time": "2026-07-04T04:00:00Z",
+        "end_time": "2026-07-06T17:59:00Z",
+        "current_session": "summer26",
+        "cloud_registration_open": true,
+        "priority_enabled": false,
+        "priority_credit_threshold": 0,
+        "priority_early_access_seconds": 0
+      },
+      "211": {
+        "is_open": true,
+        "start_time": "2026-07-04T04:00:00Z",
+        "end_time": "2026-07-06T17:59:00Z",
+        "current_session": "summer26",
+        "cloud_registration_open": true,
+        "priority_enabled": false,
+        "priority_credit_threshold": 0,
+        "priority_early_access_seconds": 0
+      },
+      "221": {
+        "is_open": true,
+        "start_time": "2026-07-04T04:00:00Z",
+        "end_time": "2026-07-06T17:59:00Z",
+        "current_session": "summer26",
+        "cloud_registration_open": true,
+        "priority_enabled": false,
+        "priority_credit_threshold": 0,
+        "priority_early_access_seconds": 0
+      },
+      "231": {
+        "is_open": true,
+        "start_time": "2026-07-04T04:00:00Z",
+        "end_time": "2026-07-06T17:59:00Z",
+        "current_session": "summer26",
+        "cloud_registration_open": true,
+        "priority_enabled": false,
+        "priority_credit_threshold": 0,
+        "priority_early_access_seconds": 0
+      },
+      "321": {
+        "is_open": true,
+        "start_time": "2026-07-04T04:00:00Z",
+        "end_time": "2026-07-06T17:59:00Z",
+        "current_session": "summer26",
+        "cloud_registration_open": true,
+        "priority_enabled": false,
+        "priority_credit_threshold": 0,
+        "priority_early_access_seconds": 0
+      },
+      "011": {
+        "is_open": true,
+        "start_time": "2026-07-04T07:00:00Z",
+        "end_time": "2026-07-06T17:59:00Z",
+        "current_session": "summer26",
+        "cloud_registration_open": true,
+        "priority_enabled": true,
+        "priority_credit_threshold": 100,
+        "priority_early_access_seconds": 10800
+      },
+      "015": {
+        "is_open": true,
+        "start_time": "2026-07-04T07:00:00Z",
+        "end_time": "2026-07-06T17:59:00Z",
+        "current_session": "summer26",
+        "cloud_registration_open": true,
+        "priority_enabled": true,
+        "priority_credit_threshold": 100,
+        "priority_early_access_seconds": 10800
+      },
+      "031": {
+        "is_open": true,
+        "start_time": "2026-07-04T04:00:00Z",
+        "end_time": "2026-07-06T17:59:00Z",
+        "current_session": "summer26",
+        "cloud_registration_open": true,
+        "priority_enabled": false,
+        "priority_credit_threshold": 0,
+        "priority_early_access_seconds": 0
+      }
+    },
+    "fallback_session": "summer26",
+    "login_control": {
+      "disable_all": false,
+      "disabled_departments": {
+        "021": true
+      }
+    },
+    "auth": {
+      "access_token_expiry_minutes": 120,
+      "refresh_token_expiry_days": 1,
+      "max_active_sessions_per_user": 1,
+      "allow_concurrent_sessions": false
+    },
+    "updated_at": "2026-07-04T00:57:57.665111475Z"
+  }
+}

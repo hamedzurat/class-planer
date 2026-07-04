@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "data": {
+    "id": "0112330113",
+    "eligible": true,
+    "evaluation_complete": true,
+    "special_note": "",
+    "role": "student",
+    "department": "011"
+  }
+}

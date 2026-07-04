@@ -1,0 +1,23 @@
+{
+  "status": "success",
+  "data": {
+    "banner_config": {
+      "banner_message": " One device at a time. Logging in elsewhere signs you out automatically only your latest login stays active.",
+      "banner_type": "warning",
+      "banner_link": "",
+      "is_active": true
+    },
+    "system_maintenance": {
+      "is_under_maintenance": false,
+      "maintenance_message": "🚧 UCAM Cloud is currently undergoing major system upgrades. The service will be temporarily unavailable while we complete these changes. Thank you for your patience.",
+      "maintenance_start_time": "2026-06-28T09:34:50.324Z",
+      "maintenance_end_time": "2026-07-01T09:34:57.457Z"
+    },
+    "auth": {
+      "authentication_enabled": true,
+      "turnstile_enabled": true,
+      "turnstile_site_key": "0x4AAAAAADvDH1FsMw3LyqDb"
+    },
+    "updated_at": "2026-07-04T01:11:57.563710435Z"
+  }
+}

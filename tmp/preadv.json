@@ -1,0 +1,66 @@
+{
+  "status": "success",
+  "data": {
+    "user_id": "0112330113",
+    "running_session": "summer26",
+    "courses": [
+      {
+        "running_session": "summer26",
+        "course_code": "1306-1-1",
+        "course_name": "Microprocessors and Microcontrollers",
+        "formal_code": "CSE 4325",
+        "ucam_ref": 54989897,
+        "credits": 3,
+        "last_synced_at": "2026-07-03T20:15:26Z",
+        "created_at": "2026-06-30T17:47:49Z",
+        "updated_at": "2026-07-03T20:15:26Z"
+      },
+      {
+        "running_session": "summer26",
+        "course_code": "1307-1-1",
+        "course_name": "Microprocessors and Microcontrollers Laboratory",
+        "formal_code": "CSE 4326",
+        "ucam_ref": 54989898,
+        "credits": 1,
+        "last_synced_at": "2026-07-03T20:15:26Z",
+        "created_at": "2026-06-30T17:47:49Z",
+        "updated_at": "2026-07-03T20:15:26Z"
+      },
+      {
+        "running_session": "summer26",
+        "course_code": "1321-1-1",
+        "course_name": "Operating Systems",
+        "formal_code": "CSE 4509",
+        "ucam_ref": 54989969,
+        "credits": 3,
+        "last_synced_at": "2026-07-03T20:15:26Z",
+        "created_at": "2026-06-30T17:47:49Z",
+        "updated_at": "2026-07-03T20:15:26Z"
+      },
+      {
+        "running_session": "summer26",
+        "course_code": "1322-1-1",
+        "course_name": "Operating Systems Laboratory",
+        "formal_code": "CSE 4510",
+        "ucam_ref": 54989970,
+        "credits": 1,
+        "last_synced_at": "2026-07-03T20:15:26Z",
+        "created_at": "2026-06-30T17:47:49Z",
+        "updated_at": "2026-07-03T20:15:26Z"
+      },
+      {
+        "running_session": "summer26",
+        "course_code": "1356-1-1",
+        "course_name": "VLSI Design",
+        "formal_code": "CSE 4327",
+        "ucam_ref": 54989952,
+        "credits": 3,
+        "last_synced_at": "2026-07-03T20:15:26Z",
+        "created_at": "2026-06-30T17:47:49Z",
+        "updated_at": "2026-07-03T20:15:26Z"
+      }
+    ],
+    "total_courses": 5,
+    "total_credits": 11
+  }
+}

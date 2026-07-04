@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "data": {
+    "course_code": "1321-1-1",
+    "course_name": "Operating Systems",
+    "formal_code": "CSE 4509",
+    "credits": 3,
+    "running_session": "summer26",
+    "have_mapped_sections": false,
+    "mapped_section_ids": [],
+    "sections": [],
+    "selection_open": false,
+    "section_selection_start_time": "2026-07-04T07:00:00Z",
+    "section_selection_end_time": "2026-07-06T17:59:00Z",
+    "is_priority_student": false,
+    "effective_start_time": "2026-07-04T07:00:00Z"
+  }
+}
