@@ -44,9 +44,8 @@ export default {
     // true = skip courses that already have a section (no change/re-select)
     skip_if_enrolled: true,
 
-    // Skip client-side selection window checks (global/dept/course times).
-    // Server still enforces its own rules — use for dry-run or testing only.
-    skip_time_check: true,
+    // false = enforce the real selection window (set true only for dry-run/testing)
+    skip_time_check: false,
 
     // Poll until selection window opens (use before official start time)
     wait_until_open: true,
@@ -60,8 +59,8 @@ export default {
     retry_on_failure: 2,
     retry_delay_ms: 800,
 
-    // true = print picks only, no POST
-    dry_run: true,
+    // false = actually POST selections (set true to preview only)
+    dry_run: false,
 
     // true = POST /courses/register after successful selects
     register_after: false,
